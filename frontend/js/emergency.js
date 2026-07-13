@@ -281,10 +281,13 @@ async function sendOtp() {
       document.getElementById('otp-target-email').textContent = targetLabel;
       
       // If server returned OTP (development/demo mode), show a clear Toast notification with the OTP code
+      const hintEl = document.getElementById('emergency-otp-demo-hint');
       if (data.otp) {
-        showEmAlert(`🔑 Demo Mode: Your OTP is ${data.otp}. (It is also logged in the server console)`, 'info');
+        showEmAlert(`🔑 Demo Mode: Your OTP is ${data.otp}.`, 'info');
+        if (hintEl) hintEl.textContent = `[Demo OTP: ${data.otp}]`;
       } else {
         showEmAlert(`OTP sent to ${targetLabel}.`, 'success');
+        if (hintEl) hintEl.textContent = '';
       }
 
       showStep(2);
