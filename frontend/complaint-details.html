@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Complaint Details - CivicPulse</title>
+  
+  <!-- CDNs for Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Print Specific Stylesheet -->
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-receipt-card, #printable-receipt-card * {
+        visibility: visible;
+      }
+      #printable-receipt-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Common Navigation Bar -->
+  <div id="common-navbar"></div>
+
+  <main class="container my-5 flex-grow-1">
+    <!-- Back to Dashboard -->
+    <div class="mb-4 no-print">
+      <a href="#" id="back-dashboard-btn" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i><span data-translate="back_dashboard">Back to Dashboard</span>
+      </a>
+    </div>
+
+    <!-- Main Detail Row -->
+    <div class="row g-4">
+      <!-- Left Column: Details -->
+      <div class="col-lg-8">
+        <!-- Printable Ticket Card -->
+        <div class="card p-4 shadow-sm border-0 mb-4" id="printable-receipt-card">
+          <div class="d-flex justify-content-between align-items-start border-bottom border-custom pb-3 mb-4 flex-wrap">
+            <div>
+              <span class="text-muted small" data-translate="details_ref_id">Complaint Reference ID</span>
+              <h2 class="fw-bold text-primary mb-1" id="details-complaint-id">CIV-XXXXXX-XXXXX</h2>
+              <span class="badge" id="details-status-badge">Submitted</span>
+              <span class="badge" id="details-priority-badge">Medium</span>
+            </div>
+            
+            <!-- QR Code container and Print action -->
+            <div class="d-flex align-items-center gap-3 mt-3 mt-sm-0">
+              <!-- QR Code target -->
+              <div id="qrcode-box" class="bg-white p-1 border rounded" style="width: 80px; height: 80px;"></div>
+              
+              <button type="button" class="btn btn-outline-primary no-print" onclick="window.print()">
+                <i class="bi bi-printer-fill me-1"></i><span data-translate="print_receipt">Print Receipt</span>
+              </button>
+            </div>
+          </div>
+
+
+          <div class="row mb-4">
+            <div class="col-12">
+              <h4 class="fw-bold mb-2" id="details-title">Loading title...</h4>
+              <p class="fs-6" id="details-description">Loading description...</p>
+            </div>
+          </div>
+
+
+          <div class="row g-3 border-top border-bottom border-custom py-3 mb-4">
+            <div class="col-sm-6">
+              <div class="small text-muted" data-translate="details_category">Category</div>
+              <div class="fw-semibold" id="details-category">Road Damage</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="small text-muted" data-translate="details_assigned">Assigned Department</div>
+              <div class="fw-semibold" id="details-department">Road Department</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="small text-muted" data-translate="details_date">Date Reported</div>
+              <div class="fw-semibold" id="details-date">N/A</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="small text-muted">Last Updated</div>
+              <div class="fw-semibold" id="details-last-updated">N/A</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="small text-muted" data-translate="details_support_votes">Citizen Support Votes</div>
+              <div class="fw-semibold"><i class="bi bi-hand-thumbs-up text-primary me-1"></i><span id="details-supports">0</span> <span data-translate="history">votes</span></div>
+            </div>
+            <div class="col-sm-6">
+              <div class="small text-muted">Estimated Resolution (ETA)</div>
+              <div class="fw-semibold text-primary-glow" id="details-eta">N/A</div>
+            </div>
+            <div class="col-12" id="details-officer-info-box">
+              <div class="small text-muted" data-translate="officer_contact">Assigned Officer Contact</div>
+              <div class="fw-semibold small"><i class="bi bi-person-badge me-1"></i><span id="details-officer-name">John Doe</span> (<span id="details-officer-phone">000</span>) • <span id="details-officer-email">email@gov.in</span></div>
+            </div>
+            <div class="col-12 d-none" id="details-citizen-info-box">
+              <div class="small text-muted">Reporting Citizen Contact (Admin/Officer only)</div>
+              <div class="fw-semibold small"><i class="bi bi-person-fill me-1"></i><span id="details-citizen-name">Jane Doe</span> (<span id="details-citizen-phone">000</span>) • <span id="details-citizen-email">jane@citizen.com</span></div>
+            </div>
+          </div>
+
+          <!-- Original Image Showcase -->
+          <div class="mb-4" id="details-image-box">
+            <h5 class="fw-bold mb-2" data-translate="uploaded_image">Citizen Uploaded Image</h5>
+            <img src="#" id="details-image" alt="Complaint evidence photo" class="img-fluid rounded border shadow-sm" style="max-height: 400px; object-fit: cover;">
+          </div>
+
+          <!-- Before/After Repair Image comparison (Carousel or side-by-side) -->
+          <div class="row g-3 mb-4 d-none" id="repair-images-box">
+            <h5 class="fw-bold mb-2" data-translate="repair_visual">Repair Visual Verification</h5>
+            <div class="col-md-6">
+              <div class="card bg-light p-2 text-center h-100">
+                <div class="small text-muted mb-2 fw-semibold" data-translate="before_repair">Before Repair</div>
+                <img src="#" id="details-before-image" alt="Before repair" class="img-fluid rounded border" style="max-height: 250px; object-fit: cover;">
+                <div class="small text-muted mt-2 d-none" id="before-img-placeholder" data-translate="form_category_placeholder">No photo uploaded</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card bg-light p-2 text-center h-100">
+                <div class="small text-muted mb-2 fw-semibold" data-translate="after_repair">After Repair</div>
+                <img src="#" id="details-after-image" alt="After repair" class="img-fluid rounded border" style="max-height: 250px; object-fit: cover;">
+                <div class="small text-muted mt-2 d-none" id="after-img-placeholder" data-translate="form_category_placeholder">No photo uploaded</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location Section -->
+          <div class="mb-2">
+            <h5 class="fw-bold mb-2" data-translate="details_map_title">Reported Coordinates</h5>
+            <div class="small text-muted mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i><span data-translate="form_latitude_label">Latitude</span>: <span id="details-lat">0</span>, <span data-translate="form_longitude_label">Longitude</span>: <span id="details-lon">0</span></div>
+            <div id="map" class="no-print" style="height: 300px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Timeline Tracking -->
+      <div class="col-lg-4">
+        <!-- Sympathy / Empathy Message -->
+        <div id="sympathy-message-box"></div>
+
+        <!-- Citizen Action Support Widget -->
+        <div class="card p-4 border-0 shadow-sm bg-light mb-4 no-print" id="citizen-support-widget">
+          <h5 class="fw-bold mb-2"><i class="bi bi-hand-thumbs-up-fill text-primary me-2"></i><span data-translate="support_widget_title">Back This Issue</span></h5>
+          <p class="small text-muted-custom" data-translate="support_widget_desc">If you are also facing this civic issue, support it instead of filing a duplicate report. Authorities prioritize highly backed issues.</p>
+          <button type="button" class="btn btn-primary w-100 fw-bold py-2" id="btn-support-action">
+            <i class="bi bi-hand-thumbs-up me-2"></i><span data-translate="details_support_btn">Support Complaint</span>
+          </button>
+        </div>
+
+        <!-- Citizen Rating & Feedback Card -->
+        <div class="card p-4 border-0 shadow-sm bg-light mb-4 no-print d-none" id="citizen-feedback-widget">
+          <h5 class="fw-bold mb-2"><i class="bi bi-star-fill text-warning me-2"></i><span data-translate="details_feedback_title">Rate this Resolution</span></h5>
+          <p class="small text-muted-custom" data-translate="details_feedback_desc">Your feedback helps municipal authorities evaluate engineering performance.</p>
+          <form id="feedback-form" novalidate>
+            <div class="mb-3">
+              <label class="form-label small fw-bold mb-1" data-translate="select_rating">Select Rating</label>
+              <div class="d-flex gap-2 justify-content-start text-warning fs-3 mb-2" id="star-rating-container" style="cursor: pointer;">
+                <i class="bi bi-star star-btn" data-val="1"></i>
+                <i class="bi bi-star star-btn" data-val="2"></i>
+                <i class="bi bi-star star-btn" data-val="3"></i>
+                <i class="bi bi-star star-btn" data-val="4"></i>
+                <i class="bi bi-star star-btn" data-val="5"></i>
+              </div>
+              <input type="hidden" id="feedback-rating-val" required>
+            </div>
+            <div class="mb-3">
+              <label for="feedback-remarks" class="form-label small fw-bold mb-1" data-translate="details_feedback_remarks">Remarks / Comments</label>
+              <textarea class="form-control form-control-sm" id="feedback-remarks" rows="2" placeholder="Tell us if you are satisfied with the repair..." data-translate-placeholder="details_feedback_remarks_placeholder"></textarea>
+            </div>
+            <button type="submit" class="btn btn-outline-warning w-100 fw-bold py-2 btn-sm" id="btn-submit-feedback">
+              <span data-translate="details_feedback_submit">Submit Feedback</span>
+            </button>
+          </form>
+          
+          <div id="feedback-readonly-container" class="d-none mt-2 p-2 rounded border bg-white text-dark">
+            <div class="small text-muted mb-1">Your rating:</div>
+            <div class="text-warning fs-4 mb-1" id="readonly-stars"></div>
+            <p class="small mb-0 text-muted-custom italic" id="readonly-remarks"></p>
+          </div>
+        </div>
+
+        <div class="card p-4 shadow-sm border-0 mb-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-arrow-repeat text-primary me-2"></i><span data-translate="progress_lifecycle">Issue Progress Lifecycle</span></h5>
+          <div id="details-lifecycle-stepper">
+            <!-- Lifecycle stepper injected dynamically -->
+          </div>
+        </div>
+
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold mb-3"><i class="bi bi-clock-history text-primary me-2"></i><span data-translate="details_history_title">Update History</span></h5>
+          <div class="timeline-container" id="details-timeline-box">
+            <!-- Timeline entries injected dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4 bg-dark text-white border-top border-custom mt-auto">
+    <div class="container text-center">
+      <p class="mb-0" data-translate="copyright">&copy; 2026 CivicPulse. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- QR Code generation library client-side -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/details.js"></script>
+</body>
+</html>

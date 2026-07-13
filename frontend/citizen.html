@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Dashboard - CivicPulse</title>
+  
+  <!-- CDNs for Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Common Navigation Bar -->
+  <div id="common-navbar"></div>
+
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="p-3 border-bottom border-custom">
+        <h5 class="fw-bold mb-0 text-primary" data-translate="citizen_portal">Citizen Portal</h5>
+      </div>
+      <nav class="d-flex flex-column mt-3">
+        <a href="citizen.html" class="sidebar-link active"><i class="bi bi-grid-fill"></i><span data-translate="sidebar_dashboard">Dashboard</span></a>
+        <a href="complaint-form.html" class="sidebar-link"><i class="bi bi-file-earmark-plus-fill"></i><span data-translate="sidebar_report_issue">Report Issue</span></a>
+        <a href="profile.html" class="sidebar-link"><i class="bi bi-person-fill-gear"></i><span data-translate="sidebar_profile">My Profile</span></a>
+        <hr class="mx-3 border-custom">
+        <a href="#" onclick="logout(); return false;" class="sidebar-link text-danger"><i class="bi bi-box-arrow-right"></i><span data-translate="sidebar_logout">Logout</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+        <div>
+          <h2 class="fw-bold mb-1" id="citizen-welcome">Welcome, Citizen!</h2>
+          <p class="text-muted-custom mb-0" data-translate="dashboard_welcome_subtitle">Help keep our city clean, safe, and operational.</p>
+        </div>
+        <div>
+          <a href="complaint-form.html" class="btn btn-primary px-4 py-2"><i class="bi bi-plus-lg me-2"></i><span data-translate="report_issue">Report New Issue</span></a>
+        </div>
+      </div>
+
+      <!-- Quick Track by Complaint ID ─────────────────────────────────── -->
+      <div class="card p-3 mb-4 border-0" style="background:var(--accent-color,#3b82f6);background:linear-gradient(135deg,rgba(59,130,246,0.15) 0%,rgba(16,185,129,0.10) 100%);border:1px solid rgba(59,130,246,0.25)!important;">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <div class="flex-shrink-0">
+            <div style="width:44px;height:44px;background:rgba(59,130,246,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-search text-primary fs-5"></i>
+            </div>
+          </div>
+          <div class="flex-grow-1">
+            <div class="fw-bold mb-1" style="font-size:0.9rem;" data-translate="quick_track_title">Quick Track by Complaint ID</div>
+            <div class="d-flex gap-2">
+              <input type="text" id="quick-track-input" class="form-control form-control-sm"
+                placeholder="Enter Complaint ID e.g. CIV-20240710-XXXXX"
+                data-translate-placeholder="quick_track_placeholder"
+                style="max-width:340px;font-family:monospace;font-size:0.85rem;letter-spacing:0.5px;"
+                onkeydown="if(event.key==='Enter') quickTrackComplaint()">
+              <button class="btn btn-primary btn-sm px-3 fw-bold" onclick="quickTrackComplaint()">
+                <i class="bi bi-arrow-right-circle-fill me-1"></i><span data-translate="track">Track</span>
+              </button>
+            </div>
+          </div>
+          <div class="d-none d-md-flex align-items-center gap-2 text-muted small">
+            <i class="bi bi-shield-check text-success"></i>
+            <span data-translate="public_track_note">Anyone can track with a Complaint ID</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <div class="card p-3 border-0 bg-primary bg-opacity-10 text-primary">
+            <div class="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-muted-custom text-uppercase small fw-bold" data-translate="total_reported">Total Reported</h6>
+                <h3 class="fw-bold mb-0" id="stat-total">0</h3>
+              </div>
+              <i class="bi bi-file-earmark-text fs-1"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 border-0 bg-warning bg-opacity-10 text-warning">
+            <div class="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-muted-custom text-uppercase small fw-bold" data-translate="unresolved">Unresolved Issues</h6>
+                <h3 class="fw-bold mb-0" id="stat-pending">0</h3>
+              </div>
+              <i class="bi bi-clock-history fs-1"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 border-0 bg-success bg-opacity-10 text-success">
+            <div class="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-muted-custom text-uppercase small fw-bold" data-translate="resolved">Resolved Fixes</h6>
+                <h3 class="fw-bold mb-0" id="stat-resolved">0</h3>
+              </div>
+              <i class="bi bi-patch-check fs-1"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Complaints List and Filter Section -->
+      <div class="row">
+        <!-- Map Widget -->
+        <div class="col-12 mb-4">
+          <div class="card p-4">
+            <h4 class="fw-bold mb-3"><i class="bi bi-map-fill text-primary me-2"></i><span data-translate="my_reported_locations">My Reported Locations</span></h4>
+            <div id="map"></div>
+          </div>
+        </div>
+
+        <!-- Table of Complaints -->
+        <div class="col-12">
+          <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 border-bottom border-custom pb-3">
+              <h4 class="fw-bold mb-0"><i class="bi bi-card-list text-primary me-2"></i><span data-translate="complaint_history">My Complaint History</span></h4>
+              <div class="d-flex gap-2 mt-3 mt-sm-0">
+                <input type="text" class="form-control" id="table-search" placeholder="Search by ID, keyword..." data-translate-placeholder="search_placeholder">
+                <select class="form-select" id="filter-category" style="max-width: 180px;">
+                  <option value="" data-translate="all_categories">All Categories</option>
+                  <option value="Road Damage" data-translate="cat_road_damage">Road Damage</option>
+                  <option value="Potholes" data-translate="cat_potholes">Potholes</option>
+                  <option value="Garbage Overflow" data-translate="cat_garbage_overflow">Garbage Overflow</option>
+                  <option value="Drainage Blockage" data-translate="cat_drainage_blockage">Drainage Blockage</option>
+                  <option value="Street Light Failure" data-translate="cat_street_light_failure">Street Light Failure</option>
+                  <option value="Water Leakage" data-translate="cat_water_leakage">Water Leakage</option>
+                  <option value="Water Supply Issue" data-translate="cat_water_supply_issue">Water Supply Issue</option>
+                  <option value="Public Sanitation" data-translate="cat_public_sanitation">Public Sanitation</option>
+                  <option value="Tree Fallen" data-translate="cat_tree_fallen">Tree Fallen</option>
+                  <option value="Broken Footpath" data-translate="cat_broken_footpath">Broken Footpath</option>
+                  <option value="Traffic Signal Issue" data-translate="cat_traffic_signal_issue">Traffic Signal Issue</option>
+                  <option value="Public Property Damage" data-translate="cat_public_property_damage">Public Property Damage</option>
+                  <option value="Other" data-translate="cat_other">Other</option>
+                </select>
+                <select class="form-select" id="filter-status" style="max-width: 150px;">
+                  <option value="" data-translate="all_statuses">All Statuses</option>
+                  <option value="Submitted" data-translate="status_submitted">Submitted</option>
+                  <option value="Verified" data-translate="status_verified">Verified</option>
+                  <option value="Assigned" data-translate="status_assigned">Assigned</option>
+                  <option value="Under Review" data-translate="status_under_review">Under Review</option>
+                  <option value="Repair Started" data-translate="status_repair_started">Repair Started</option>
+                  <option value="Repair In Progress" data-translate="status_repair_in_progress">Repair In Progress</option>
+                  <option value="Resolved" data-translate="status_resolved">Resolved</option>
+                  <option value="Closed" data-translate="status_closed">Closed</option>
+                  <option value="Rejected" data-translate="status_rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Table Wrapper -->
+            <div class="table-responsive">
+              <table class="table custom-table">
+                <thead>
+                  <tr>
+                    <th data-translate="details_ref_id">ID</th>
+                    <th data-translate="issue_title">Title</th>
+                    <th data-translate="issue_category">Category</th>
+                    <th data-translate="issue_priority">Priority</th>
+                    <th data-translate="issue_status">Status</th>
+                    <th data-translate="details_support_votes">Supports</th>
+                    <th data-translate="date_reported">Date Reported</th>
+                    <th class="text-center" data-translate="action_header">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="citizen-complaints-tbody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+              <div id="citizen-empty-state" class="empty-state d-none">
+                <i class="bi bi-file-earmark-excel"></i>
+                <h5 class="fw-bold" data-translate="no_complaints_found">No complaints found</h5>
+                <p class="text-muted-custom" data-translate="no_complaints_help">Submit a new complaint to get started.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/citizen.js"></script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - CivicPulse</title>
+  <meta name="description" content="CivicPulse Privacy Policy — how we collect, use, store, and protect your personal data.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .privacy-section h3 { font-size: 1.15rem; font-weight: 700; color: #1e3a5f; margin-top: 2rem; }
+    .privacy-section p, .privacy-section li { color: #444; line-height: 1.85; }
+    .data-table th { background: #f1f5f9; }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <div id="common-navbar"></div>
+
+  <header class="py-4 bg-dark text-white">
+    <div class="container">
+      <h1 class="fw-bold mb-1"><i class="bi bi-lock-fill me-2"></i>Privacy Policy</h1>
+      <p class="text-white-50 mb-0">Effective Date: 1 January 2026 &nbsp;|&nbsp; Last Reviewed: 10 July 2026</p>
+    </div>
+  </header>
+
+  <main class="flex-grow-1 py-5">
+    <div class="container">
+      <div class="row">
+
+        <!-- Sticky TOC -->
+        <div class="col-lg-3 d-none d-lg-block">
+          <div class="card border-0 bg-light p-3 sticky-top" style="top:80px;">
+            <h6 class="fw-bold mb-3 text-muted text-uppercase small">Contents</h6>
+            <ul class="list-unstyled small">
+              <li class="mb-1"><a href="#overview" class="text-decoration-none text-primary">1. Overview</a></li>
+              <li class="mb-1"><a href="#data-collected" class="text-decoration-none text-primary">2. Data We Collect</a></li>
+              <li class="mb-1"><a href="#how-used" class="text-decoration-none text-primary">3. How We Use Your Data</a></li>
+              <li class="mb-1"><a href="#sharing" class="text-decoration-none text-primary">4. Data Sharing</a></li>
+              <li class="mb-1"><a href="#otp" class="text-decoration-none text-primary">5. OTP &amp; Emergency Data</a></li>
+              <li class="mb-1"><a href="#retention" class="text-decoration-none text-primary">6. Data Retention</a></li>
+              <li class="mb-1"><a href="#security" class="text-decoration-none text-primary">7. Security</a></li>
+              <li class="mb-1"><a href="#rights" class="text-decoration-none text-primary">8. Your Rights</a></li>
+              <li class="mb-1"><a href="#cookies" class="text-decoration-none text-primary">9. Cookies</a></li>
+              <li class="mb-1"><a href="#minors" class="text-decoration-none text-primary">10. Children's Privacy</a></li>
+              <li class="mb-1"><a href="#changes" class="text-decoration-none text-primary">11. Policy Changes</a></li>
+              <li class="mb-1"><a href="#contact-us" class="text-decoration-none text-primary">12. Contact</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-lg-9">
+          <div class="privacy-section">
+
+            <div class="alert alert-primary mb-4">
+              <i class="bi bi-shield-check-fill me-2"></i>
+              <strong>Your privacy matters.</strong> CivicPulse collects only the minimum data necessary to deliver the Platform's services. We do not sell your personal data to any third party.
+            </div>
+
+            <h3 id="overview">1. Overview</h3>
+            <p>CivicPulse Municipal Corporation ("we", "us", "our") is committed to protecting the privacy of all users of the CivicPulse Platform ("Platform"). This Privacy Policy explains what personal data we collect, why we collect it, how it is used, and the rights you have over your information.</p>
+            <p>This policy applies to all users including citizens who register accounts, anonymous users who track complaints publicly, and municipal authority users. By using the Platform, you consent to the data practices described herein.</p>
+
+            <h3 id="data-collected">2. Data We Collect</h3>
+
+            <h5 class="fw-semibold mt-3">2.1 Account Registration Data</h5>
+            <div class="table-responsive mb-3">
+              <table class="table table-bordered data-table small">
+                <thead><tr><th>Data Field</th><th>Purpose</th><th>Required?</th></tr></thead>
+                <tbody>
+                  <tr><td>Full Name</td><td>Identity display on account and reports</td><td>Yes</td></tr>
+                  <tr><td>Email Address</td><td>Login, OTP delivery, notifications</td><td>Yes</td></tr>
+                  <tr><td>Mobile Number</td><td>Contact verification, emergency alerts</td><td>Yes</td></tr>
+                  <tr><td>Address</td><td>Contextual jurisdiction routing</td><td>Optional</td></tr>
+                  <tr><td>Password (hashed)</td><td>Account authentication (bcrypt, never stored in plaintext)</td><td>Yes</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h5 class="fw-semibold mt-3">2.2 Complaint Data</h5>
+            <div class="table-responsive mb-3">
+              <table class="table table-bordered data-table small">
+                <thead><tr><th>Data Field</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td>GPS Coordinates (Latitude / Longitude)</td><td>Precise issue location for department routing</td></tr>
+                  <tr><td>Issue Title &amp; Description</td><td>Complaint content for authorities</td></tr>
+                  <tr><td>Category &amp; Priority</td><td>Department assignment and escalation</td></tr>
+                  <tr><td>Uploaded Photos</td><td>Evidence for repair verification</td></tr>
+                  <tr><td>Complaint Reference ID</td><td>Public tracking without exposing personal data</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h5 class="fw-semibold mt-3">2.3 Emergency Report Data</h5>
+            <p>For emergency reports submitted without a registered account, we collect name, email address, and mobile number solely for OTP verification and complaint attribution. This data is linked to a minimal guest account that can be upgraded by the user upon registration.</p>
+
+            <h5 class="fw-semibold mt-3">2.4 Automatically Collected Data</h5>
+            <p>We may automatically collect browser type, device type, IP address, and access timestamps for security monitoring and platform performance analysis. This data is not shared with third parties and is retained for a maximum of 30 days.</p>
+
+            <h3 id="how-used">3. How We Use Your Data</h3>
+            <ul>
+              <li><strong>Service Delivery:</strong> Process and route your complaints to the appropriate municipal department.</li>
+              <li><strong>Authentication:</strong> Verify your identity during login and OTP verification.</li>
+              <li><strong>Notifications:</strong> Send status updates on your complaints (email).</li>
+              <li><strong>Platform Improvement:</strong> Analyse aggregated, anonymised usage data to improve features.</li>
+              <li><strong>Legal Compliance:</strong> Respond to lawful government requests and comply with applicable Indian law.</li>
+              <li><strong>Security:</strong> Detect and prevent fraudulent, abusive, or illegal activity.</li>
+            </ul>
+            <p>We do <strong>not</strong> use your data for targeted advertising, profiling for commercial purposes, or any processing beyond what is described in this Policy.</p>
+
+            <h3 id="sharing">4. Data Sharing &amp; Disclosure</h3>
+            <p>We share your data only with:</p>
+            <ul>
+              <li><strong>Municipal Department Officers:</strong> Your name, complaint details, GPS location, and contact info are shared with the assigned department officer to facilitate repair work.</li>
+              <li><strong>System Administrators:</strong> CivicPulse admins can access all complaint data for moderation and oversight purposes.</li>
+              <li><strong>Legal Authorities:</strong> We may disclose data when required by a court order, government directive, or applicable law under the Information Technology Act, 2000.</li>
+            </ul>
+            <p>We <strong>never sell, rent, or trade</strong> your personal data to any commercial third party, advertising network, or data broker.</p>
+
+            <h3 id="otp">5. OTP &amp; Emergency Report Data</h3>
+            <p>OTP records generated for emergency report verification are stored temporarily with a maximum validity of <strong>10 minutes</strong>. After expiry or successful use, OTP records are automatically purged from our database using MongoDB TTL (Time-to-Live) indexes. The associated email and phone number are retained only as part of the guest user account until the user deletes their account or requests data erasure.</p>
+
+            <h3 id="retention">6. Data Retention</h3>
+            <div class="table-responsive">
+              <table class="table table-bordered data-table small">
+                <thead><tr><th>Data Type</th><th>Retention Period</th></tr></thead>
+                <tbody>
+                  <tr><td>Active user accounts</td><td>Until account deletion request</td></tr>
+                  <tr><td>Complaint records</td><td>5 years (for civic audit purposes)</td></tr>
+                  <tr><td>OTP records</td><td>10 minutes (auto-purged by TTL)</td></tr>
+                  <tr><td>Server access logs</td><td>30 days</td></tr>
+                  <tr><td>Uploaded images</td><td>5 years or until complaint closure + 1 year</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="security">7. Data Security</h3>
+            <p>We implement appropriate technical and organisational measures to protect your personal data, including:</p>
+            <ul>
+              <li><strong>Password Hashing:</strong> All passwords are hashed using bcrypt (salt rounds: 10) before storage. Plaintext passwords are never stored or logged.</li>
+              <li><strong>JWT Authentication:</strong> Session tokens use signed JSON Web Tokens with configurable expiry to prevent session hijacking.</li>
+              <li><strong>HTTPS Enforcement:</strong> All production deployments enforce HTTPS. HTTP traffic is redirected.</li>
+              <li><strong>Role-Based Access Control:</strong> Citizens, authorities, and admins have strictly scoped access — each role can only access data permitted to their level.</li>
+              <li><strong>File Upload Restrictions:</strong> Uploaded files are validated for MIME type and size (max 5MB). Files are stored outside the web root.</li>
+            </ul>
+            <p>Despite these measures, no digital transmission is 100% secure. We encourage users to use strong, unique passwords and report any suspicious activity immediately.</p>
+
+            <h3 id="rights">8. Your Rights</h3>
+            <p>Under applicable Indian data protection law (including the Digital Personal Data Protection Act, 2023), you have the right to:</p>
+            <ul>
+              <li><strong>Access:</strong> Request a copy of the personal data we hold about you.</li>
+              <li><strong>Correction:</strong> Request correction of inaccurate or incomplete data.</li>
+              <li><strong>Erasure:</strong> Request deletion of your account and associated personal data (subject to legal retention obligations).</li>
+              <li><strong>Withdrawal of Consent:</strong> Withdraw consent to data processing where processing is based on consent.</li>
+              <li><strong>Grievance Redressal:</strong> Lodge a complaint with our designated Grievance Officer.</li>
+            </ul>
+            <p>To exercise any of these rights, email <a href="mailto:privacy@civicpulse.gov.in">privacy@civicpulse.gov.in</a>. We will respond within 30 days.</p>
+
+            <h3 id="cookies">9. Cookies &amp; Local Storage</h3>
+            <p>CivicPulse uses browser <strong>localStorage</strong> (not cookies) to store your authentication token and user session data locally. This data is stored only on your device and is cleared when you log out. We do not use third-party tracking cookies or analytics cookies.</p>
+
+            <h3 id="minors">10. Children's Privacy</h3>
+            <p>The CivicPulse Platform is not directed at children under the age of 13. We do not knowingly collect personal data from children under 13. If you become aware that a child has provided us with personal data without parental consent, please contact us at <a href="mailto:privacy@civicpulse.gov.in">privacy@civicpulse.gov.in</a> and we will take steps to delete such information.</p>
+
+            <h3 id="changes">11. Changes to This Policy</h3>
+            <p>We may update this Privacy Policy periodically. When we make material changes, we will notify registered users via email and display a prominent notice on the Platform homepage for at least 30 days. The "Last Reviewed" date at the top of this page reflects the most recent revision. Your continued use of the Platform after changes take effect constitutes acceptance of the revised Policy.</p>
+
+            <h3 id="contact-us">12. Contact &amp; Grievance Officer</h3>
+            <p>For any privacy-related queries, data requests, or complaints:</p>
+            <div class="card border-0 bg-light p-4">
+              <h6 class="fw-bold">Data Protection &amp; Grievance Officer</h6>
+              <p class="mb-1"><i class="bi bi-person-fill me-2 text-primary"></i>CivicPulse Data Protection Officer</p>
+              <p class="mb-1"><i class="bi bi-envelope-fill me-2 text-primary"></i><a href="mailto:privacy@civicpulse.gov.in">privacy@civicpulse.gov.in</a></p>
+              <p class="mb-1"><i class="bi bi-envelope-fill me-2 text-muted"></i>Grievance: <a href="mailto:grievance@civicpulse.gov.in">grievance@civicpulse.gov.in</a></p>
+              <p class="mb-0"><i class="bi bi-geo-alt-fill me-2 text-primary"></i>CivicPulse Municipal Corporation, Civic Centre, New Delhi — 110001</p>
+            </div>
+
+            <p class="text-muted small mt-4 border-top pt-3">This Privacy Policy was prepared in accordance with the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011, and the Digital Personal Data Protection Act, 2023 (India).</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4 bg-dark text-white border-top border-custom mt-auto">
+    <div class="container text-center">
+      <p class="mb-1">&copy; 2026 CivicPulse Municipal Corporation. All Rights Reserved.</p>
+      <div class="d-flex justify-content-center gap-3">
+        <a href="about.html" class="text-white-50 text-decoration-none small">About Us</a>
+        <span class="text-white-50">•</span>
+        <a href="terms.html" class="text-white-50 text-decoration-none small">Terms of Service</a>
+        <span class="text-white-50">•</span>
+        <a href="privacy.html" class="text-white-50 text-decoration-none small">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common.js"></script>
+</body>
+</html>

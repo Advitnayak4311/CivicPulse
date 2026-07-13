@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Account - CivicPulse</title>
+  
+  <!-- CDNs for Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="d-flex flex-column min-vh-100 auth-body">
+
+  <!-- Common Navigation Bar -->
+  <div id="common-navbar"></div>
+
+  <main class="container my-auto py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card p-4 p-sm-5 shadow-lg auth-card">
+          <div class="card-body">
+            <div class="text-center mb-4">
+              <i class="bi bi-person-plus text-primary fs-1"></i>
+              <h2 class="fw-bold mt-2 text-white" data-translate="register_title">Citizen Registration</h2>
+              <p class="text-white-50 small" data-translate="register_desc">Create an account to report issues and track repairs</p>
+            </div>
+            
+            <form id="register-form" novalidate>
+              <div class="mb-3">
+                <label for="name" class="form-label auth-label" data-translate="register_name_label">Full Name</label>
+                <div class="input-group auth-input-group">
+                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control" id="name" required placeholder="John Doe" data-translate-placeholder="register_name_placeholder">
+                </div>
+                <div class="invalid-feedback">Full name is required.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label auth-label" data-translate="register_email_label">Email Address <span class="text-white-50 small">(Either Email or Phone is required)</span></label>
+                <div class="input-group auth-input-group">
+                  <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                  <input type="email" class="form-control" id="email" placeholder="john@example.com" data-translate-placeholder="register_email_placeholder">
+                </div>
+                <div class="invalid-feedback">Please enter a valid email address.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="phone" class="form-label auth-label" data-translate="register_phone_label">Phone Number <span class="text-white-50 small">(Either Email or Phone is required)</span></label>
+                <div class="input-group auth-input-group">
+                  <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                  <input type="tel" class="form-control" id="phone" placeholder="9998887776" data-translate-placeholder="register_phone_placeholder">
+                </div>
+                <div class="invalid-feedback">Please enter your phone number.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label auth-label" data-translate="login_password_label">Password</label>
+                <div class="input-group auth-input-group">
+                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                  <input type="password" class="form-control" id="password" required minlength="6" placeholder="At least 6 characters" data-translate-placeholder="register_password_placeholder">
+                  <button class="input-group-text btn-eye-toggle" type="button" onclick="togglePasswordVisibility('password', this)" title="Show/Hide Password">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+                <div class="invalid-feedback">Password must be at least 6 characters.</div>
+              </div>
+
+              <div class="mb-4">
+                <label for="address" class="form-label auth-label" data-translate="register_address_label">Residential Address</label>
+                <div class="input-group auth-input-group">
+                  <span class="input-group-text"><i class="bi bi-house-door"></i></span>
+                  <textarea class="form-control" id="address" rows="2" placeholder="Street, Area, City" data-translate-placeholder="register_address_placeholder"></textarea>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-auth-submit w-100 py-2 fw-bold mb-3">
+                <i class="bi bi-check-circle me-2"></i><span data-translate="register_btn">Register Account</span>
+              </button>
+
+              <div class="text-center">
+                <span class="text-white-50" data-translate="register_already_account">Already have an account? </span>
+                <a href="login.html" class="text-primary fw-bold text-decoration-none" data-translate="register_login_link">Login Here</a>
+              </div>
+            </form>
+
+            <!-- OTP Verification Form -->
+            <form id="otp-form" class="d-none" novalidate>
+              <div class="text-center mb-4">
+                <i class="bi bi-shield-check text-success fs-1"></i>
+                <h4 class="fw-bold mt-2" data-translate="otp_form_title">Enter Verification Codes</h4>
+                <p class="text-muted-custom small" data-translate="otp_form_desc">We have sent security codes to verify your identity.</p>
+              </div>
+
+              <div class="mb-3 d-none" id="email-otp-group">
+                <label for="email-otp" class="form-label" data-translate="otp_email_label">Email Verification OTP</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-envelope-check text-muted"></i></span>
+                  <input type="text" class="form-control text-center fw-bold fs-5 letter-spacing-custom" id="email-otp" maxlength="6" placeholder="000000">
+                </div>
+                <div class="form-text text-muted" id="email-otp-demo-hint"></div>
+              </div>
+
+              <div class="mb-4 d-none" id="phone-otp-group">
+                <label for="phone-otp" class="form-label" data-translate="otp_phone_label">Phone Verification OTP</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-telephone-check text-muted"></i></span>
+                  <input type="text" class="form-control text-center fw-bold fs-5 letter-spacing-custom" id="phone-otp" maxlength="6" placeholder="000000">
+                </div>
+                <div class="form-text text-muted" id="phone-otp-demo-hint"></div>
+              </div>
+
+              <button type="submit" class="btn btn-success w-100 py-2.5 fw-bold mb-3" id="btn-verify-register">
+                <i class="bi bi-shield-fill-check me-2"></i><span data-translate="otp_verify_btn">Verify & Complete Register</span>
+              </button>
+
+              <button type="button" class="btn btn-outline-secondary w-100 py-2" id="btn-back-register">
+                <i class="bi bi-arrow-left me-2"></i><span data-translate="otp_back_btn">Back to Registration Form</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4 bg-dark text-white border-top border-custom mt-auto">
+    <div class="container text-center">
+      <p class="mb-0" data-translate="copyright">&copy; 2026 CivicPulse. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

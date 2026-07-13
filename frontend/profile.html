@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile & Settings - CivicPulse</title>
+  
+  <!-- CDNs for Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Common Navigation Bar -->
+  <div id="common-navbar"></div>
+
+  <main class="container my-5 flex-grow-1">
+    <div class="row">
+      <div class="col-lg-6 mx-auto">
+        <div class="card p-4 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="text-center mb-4">
+              <div class="position-relative d-inline-block mb-3">
+                <img src="https://ui-avatars.com/api/?name=User&background=random&size=128" id="prof-photo-preview" class="rounded-circle border shadow-sm" style="width: 120px; height: 120px; object-fit: cover;">
+                <label for="prof-photo-input" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; cursor: pointer;" title="Change Photo">
+                  <i class="bi bi-camera-fill"></i>
+                </label>
+                <input type="file" id="prof-photo-input" accept=".jpg, .jpeg, .png" class="d-none">
+              </div>
+              <h2 class="fw-bold mt-2" id="prof-display-name" data-translate="profile_settings_title">Manage Profile Settings</h2>
+              <p class="text-muted-custom" data-translate="profile_settings_desc">Keep your account contact information current.</p>
+            </div>
+            
+            <form id="profile-update-form" novalidate enctype="multipart/form-data">
+              <div class="mb-3">
+                <label for="prof-role" class="form-label fw-bold" data-translate="profile_role">Account Role</label>
+                <input type="text" class="form-control bg-light" id="prof-role" readonly value="Citizen">
+              </div>
+
+              <div class="mb-3">
+                <label for="prof-name" class="form-label fw-bold" data-translate="profile_name">Full Name</label>
+                <input type="text" class="form-control" id="prof-name" required placeholder="John Doe" data-translate-placeholder="profile_name_placeholder">
+                <div class="invalid-feedback">Name is required.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="prof-email" class="form-label fw-bold" data-translate="profile_email">Email Address (Registered)</label>
+                <input type="email" class="form-control bg-light" id="prof-email" readonly value="john@example.com">
+                <div class="form-text" data-translate="profile_email_help">Registration emails cannot be changed.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="prof-phone" class="form-label fw-bold" data-translate="profile_phone">Phone Number</label>
+                <input type="tel" class="form-control" id="prof-phone" required placeholder="9998887776" data-translate-placeholder="profile_phone_placeholder">
+                <div class="invalid-feedback">Phone number is required.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="prof-lang" class="form-label fw-bold" data-translate="profile_lang">Preferred System Language</label>
+                <select class="form-select" id="prof-lang">
+                  <option value="en">English (US)</option>
+                  <option value="hi">हिन्दी (Hindi)</option>
+                  <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                  <option value="ta">தமிழ் (Tamil)</option>
+                  <option value="te">తెలుగు (Telugu)</option>
+                  <option value="ml">മലയാളം (Malayalam)</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="prof-address" class="form-label fw-bold" data-translate="profile_address">Home Address</label>
+                <textarea class="form-control" id="prof-address" rows="2" placeholder="Street, Area, City" data-translate-placeholder="profile_address_placeholder"></textarea>
+              </div>
+
+              <hr class="my-4 border-custom">
+              
+              <div class="bg-light p-3 rounded mb-4">
+                <h5 class="fw-bold mb-2 text-dark"><i class="bi bi-key-fill text-warning me-2"></i><span data-translate="profile_change_pwd">Change Password</span></h5>
+                <p class="small text-muted-custom mb-3" data-translate="profile_change_pwd_desc">Password updates require OTP verification for your security. Leave blank to keep current password.</p>
+                
+                <div class="mb-3">
+                  <label for="prof-password" class="form-label text-dark small mb-1" data-translate="profile_new_pwd">New Password</label>
+                  <input type="password" class="form-control bg-white" id="prof-password" minlength="6" placeholder="At least 6 characters" data-translate-placeholder="profile_new_pwd_placeholder">
+                  <div class="invalid-feedback">Password must be at least 6 characters.</div>
+                </div>
+
+                <div id="otp-verification-section" class="d-none mt-3 border-top pt-3">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="form-label text-dark small mb-0 fw-bold" data-translate="profile_otp">Verification OTP</label>
+                    <button type="button" class="btn btn-outline-primary btn-sm px-2 py-1" id="btn-send-profile-otp" style="font-size: 0.75rem;" data-translate="profile_send_otp">
+                      Send OTP Code
+                    </button>
+                  </div>
+                  <input type="text" class="form-control bg-white" id="prof-otp" placeholder="6-digit OTP code" data-translate-placeholder="emergency_enter_otp" maxlength="6">
+                  <div class="form-text text-muted" id="otp-delivery-info" data-translate="profile_otp_help">OTP will be sent to your registered Email or Phone.</div>
+                </div>
+              </div>
+
+              <div class="d-flex gap-2 justify-content-end">
+                <a href="#" id="profile-cancel-btn" class="btn btn-outline-secondary px-4" data-translate="profile_cancel">Cancel</a>
+                <button type="submit" class="btn btn-primary px-5 fw-bold">
+                  <i class="bi bi-save me-2"></i><span data-translate="profile_save">Save Settings</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4 bg-dark text-white border-top border-custom mt-auto">
+    <div class="container text-center">
+      <p class="mb-0" data-translate="copyright">&copy; 2026 CivicPulse. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = localStorage.getItem('token');
+      if (!user || !token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Populate current user data
+      document.getElementById('prof-role').value = user.role.toUpperCase();
+      document.getElementById('prof-name').value = user.name;
+      document.getElementById('prof-email').value = user.email || 'N/A';
+      document.getElementById('prof-phone').value = user.phone || '';
+      document.getElementById('prof-address').value = user.address || '';
+      document.getElementById('prof-lang').value = user.preferredLanguage || 'en';
+      document.getElementById('prof-display-name').innerText = user.name;
+
+      // Handle Avatar Preview & default fallback
+      const photoPreview = document.getElementById('prof-photo-preview');
+      if (user.profilePhoto) {
+        photoPreview.src = `http://localhost:5000${user.profilePhoto}`;
+      } else {
+        photoPreview.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&size=128`;
+      }
+
+      // Handle file selector preview change
+      const photoInput = document.getElementById('prof-photo-input');
+      photoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            photoPreview.src = event.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Show/Hide OTP Verification section based on password presence
+      const passwordInput = document.getElementById('prof-password');
+      const otpSection = document.getElementById('otp-verification-section');
+      passwordInput.addEventListener('input', () => {
+        if (passwordInput.value.trim().length > 0) {
+          otpSection.classList.remove('d-none');
+          document.getElementById('prof-otp').setAttribute('required', 'true');
+        } else {
+          otpSection.classList.add('d-none');
+          document.getElementById('prof-otp').removeAttribute('required');
+        }
+      });
+
+      // Send OTP Action
+      const btnSendOtp = document.getElementById('btn-send-profile-otp');
+      btnSendOtp.addEventListener('click', async () => {
+        btnSendOtp.disabled = true;
+        btnSendOtp.innerText = 'Sending...';
+
+        try {
+          const res = await apiRequest('/auth/send-otp', {
+            method: 'POST'
+          });
+
+          if (res.success) {
+            showToast(res.message, 'success');
+            // If OTP is returned in response (demo mode), auto-fill or alert
+            if (res.otp) {
+              console.log('DEMO OTP:', res.otp);
+              showToast(`[DEMO MODE] OTP: ${res.otp}`, 'info');
+              document.getElementById('prof-otp').value = res.otp;
+            }
+            btnSendOtp.innerText = 'Sent';
+            setTimeout(() => {
+              btnSendOtp.disabled = false;
+              btnSendOtp.innerText = 'Resend OTP';
+            }, 10000);
+          } else {
+            showToast('Failed to send OTP.', 'danger');
+            btnSendOtp.disabled = false;
+            btnSendOtp.innerText = 'Send OTP Code';
+          }
+        } catch (error) {
+          console.error(error);
+          showToast('Failed to send OTP.', 'danger');
+          btnSendOtp.disabled = false;
+          btnSendOtp.innerText = 'Send OTP Code';
+        }
+      });
+
+      // Set Cancel Link back to dashboard
+      const cancelBtn = document.getElementById('profile-cancel-btn');
+      if (user.role === 'admin') cancelBtn.href = 'admin.html';
+      else if (user.role === 'authority') cancelBtn.href = 'authority.html';
+      else cancelBtn.href = 'citizen.html';
+
+      // Submit changes
+      document.getElementById('profile-update-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+
+        if (!form.checkValidity()) {
+          e.stopPropagation();
+          form.classList.add('was-validated');
+          return;
+        }
+
+        const name = document.getElementById('prof-name').value.trim();
+        const phone = document.getElementById('prof-phone').value.trim();
+        const address = document.getElementById('prof-address').value.trim();
+        const preferredLanguage = document.getElementById('prof-lang').value;
+        const password = document.getElementById('prof-password').value;
+        const otp = document.getElementById('prof-otp').value.trim();
+
+        // Create FormData to support file upload
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('phone', phone);
+        formData.append('address', address);
+        formData.append('preferredLanguage', preferredLanguage);
+
+        if (password) {
+          if (password.length < 6) {
+            showToast('New password must be at least 6 characters.', 'warning');
+            return;
+          }
+          if (!otp) {
+            showToast('Please verify your password update with an OTP code.', 'warning');
+            return;
+          }
+          formData.append('password', password);
+          formData.append('otp', otp);
+        }
+
+        if (photoInput.files[0]) {
+          formData.append('profilePhoto', photoInput.files[0]);
+        }
+
+        try {
+          const res = await apiRequest('/auth/profile', {
+            method: 'PUT',
+            body: formData
+          });
+
+          if (res.success) {
+            showToast('Profile settings saved successfully!', 'success');
+            
+            // Re-store details
+            localStorage.setItem('token', res.data.token);
+            // Apply language preference instantly
+            localStorage.setItem('lang', res.data.preferredLanguage);
+            
+            const userDetails = { ...res.data };
+            delete userDetails.token;
+            localStorage.setItem('user', JSON.stringify(userDetails));
+            
+            // Refresh view
+            renderCommonNavbar();
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          }
+        } catch (error) {
+          console.error('Failed to update profile settings:', error);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

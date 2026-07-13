@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - CivicPulse</title>
+  <meta name="description" content="Learn about CivicPulse — India's smart civic issue monitoring and municipal response platform bridging citizens and government authorities.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <div id="common-navbar"></div>
+
+  <!-- Hero -->
+  <header class="py-5" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;">
+    <div class="container text-center">
+      <i class="bi bi-shield-shaded fs-1 text-white mb-3 d-block"></i>
+      <h1 class="fw-bold display-5 mb-2">About CivicPulse</h1>
+      <p class="lead text-white-50 mb-0">Empowering citizens. Accelerating municipal response. Building smarter cities.</p>
+    </div>
+  </header>
+
+  <main class="flex-grow-1 py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+          <!-- Mission -->
+          <section class="mb-5">
+            <h2 class="fw-bold mb-3"><i class="bi bi-bullseye text-primary me-2"></i>Our Mission</h2>
+            <p class="fs-5 text-muted">CivicPulse was built with a single, unwavering goal: <strong>to eliminate the gap between citizen-reported civic problems and timely government action.</strong></p>
+            <p>Every day, millions of Indians navigate potholed roads, burst water mains, overflowing drains, and broken street lights — problems that persist for weeks or months due to inefficient reporting channels, opaque bureaucracy, and lack of accountability. CivicPulse replaces informal phone calls and paper petitions with a structured, transparent, and GPS-precise digital platform.</p>
+            <p>We believe that every citizen deserves a clean, safe, and functional urban environment — and that the path to achieving this starts with empowering people to be heard.</p>
+          </section>
+
+          <hr class="my-5 border-custom">
+
+          <!-- What We Do -->
+          <section class="mb-5">
+            <h2 class="fw-bold mb-4"><i class="bi bi-gear-wide-connected text-primary me-2"></i>What CivicPulse Does</h2>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="card h-100 p-4 border-0 shadow-sm">
+                  <i class="bi bi-pin-map-fill text-primary fs-3 mb-3"></i>
+                  <h5 class="fw-bold">GPS-Precise Reporting</h5>
+                  <p class="text-muted mb-0">Citizens pin exact GPS coordinates on an interactive map, eliminating ambiguity. Photographic evidence is uploaded directly within the report.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card h-100 p-4 border-0 shadow-sm">
+                  <i class="bi bi-diagram-3-fill text-primary fs-3 mb-3"></i>
+                  <h5 class="fw-bold">Smart Department Routing</h5>
+                  <p class="text-muted mb-0">Our rule-based engine automatically assigns each complaint to the correct municipal department based on issue category — no manual triage required.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card h-100 p-4 border-0 shadow-sm">
+                  <i class="bi bi-clock-history text-primary fs-3 mb-3"></i>
+                  <h5 class="fw-bold">Live Lifecycle Tracking</h5>
+                  <p class="text-muted mb-0">Every status change — from Submitted to Resolved — is recorded in a tamper-evident timeline. Citizens track progress in real time without making a single phone call.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card h-100 p-4 border-0 shadow-sm">
+                  <i class="bi bi-exclamation-triangle-fill text-danger fs-3 mb-3"></i>
+                  <h5 class="fw-bold">Emergency Fast-Track</h5>
+                  <p class="text-muted mb-0">Critical issues are escalated instantly through an OTP-verified emergency channel — no account required, highest priority automatically assigned.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card h-100 p-4 border-0 shadow-sm">
+                  <i class="bi bi-hand-thumbs-up-fill text-primary fs-3 mb-3"></i>
+                  <h5 class="fw-bold">Community Support Voting</h5>
+                  <p class="text-muted mb-0">Citizens experiencing the same issue can "support" an existing complaint, boosting its priority score and ensuring the most impactful issues get resolved first.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card h-100 p-4 border-0 shadow-sm">
+                  <i class="bi bi-image-fill text-primary fs-3 mb-3"></i>
+                  <h5 class="fw-bold">Repair Verification</h5>
+                  <p class="text-muted mb-0">Authorities upload before-and-after repair photographs. Citizens can visually verify that work was completed properly before the complaint is closed.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="my-5 border-custom">
+
+          <!-- Department Routing Table -->
+          <section class="mb-5">
+            <h2 class="fw-bold mb-3"><i class="bi bi-building-fill text-primary me-2"></i>Department Assignment System</h2>
+            <p class="text-muted">Issues are automatically routed to the correct department using our category mapping engine:</p>
+            <div class="table-responsive">
+              <table class="table custom-table">
+                <thead>
+                  <tr>
+                    <th>Issue Category</th>
+                    <th>Assigned Department</th>
+                    <th>Avg Response Target</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Road Damage, Potholes, Broken Footpath</td><td>Road Department</td><td>48 hours</td></tr>
+                  <tr><td>Garbage Overflow, Public Sanitation, Tree Fallen</td><td>Sanitation Department</td><td>24 hours</td></tr>
+                  <tr><td>Street Light Failure, Traffic Signal Issue</td><td>Electrical Department</td><td>36 hours</td></tr>
+                  <tr><td>Drainage Blockage</td><td>Drainage Department</td><td>24 hours</td></tr>
+                  <tr><td>Water Leakage, Water Supply Issue</td><td>Water Supply Department</td><td>12 hours</td></tr>
+                  <tr><td>Emergency (any category)</td><td>All relevant departments + Admin</td><td><span class="text-danger fw-bold">Immediate</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <hr class="my-5 border-custom">
+
+          <!-- Issue Lifecycle -->
+          <section class="mb-5">
+            <h2 class="fw-bold mb-4"><i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>The Complaint Lifecycle</h2>
+            <div class="card p-4">
+              <div class="timeline-container">
+                <div class="timeline-item completed">
+                  <h5 class="fw-bold mb-1">1. Submitted</h5>
+                  <p class="text-muted small">Citizen files a report with GPS pin, photo, category, and description. System generates a unique Reference ID (e.g. CIV-20240710-XXXXX). Duplicate detection runs automatically.</p>
+                </div>
+                <div class="timeline-item completed">
+                  <h5 class="fw-bold mb-1">2. Verified & Assigned</h5>
+                  <p class="text-muted small">Admin validates the complaint and the system auto-routes it to the appropriate municipal department. The officer is notified.</p>
+                </div>
+                <div class="timeline-item completed">
+                  <h5 class="fw-bold mb-1">3. Under Review / Repair Started</h5>
+                  <p class="text-muted small">Field inspection occurs. Work crew is dispatched. Status updates and "Before Repair" photos are uploaded to the complaint timeline.</p>
+                </div>
+                <div class="timeline-item completed">
+                  <h5 class="fw-bold mb-1">4. Repair In Progress</h5>
+                  <p class="text-muted small">Active remediation is underway. Citizens can monitor the live status update trail at any time using their Reference ID.</p>
+                </div>
+                <div class="timeline-item">
+                  <h5 class="fw-bold mb-1">5. Resolved & Closed</h5>
+                  <p class="text-muted small">Work is complete. "After Repair" photos are uploaded. A printable resolution receipt is generated. The complaint is archived.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="my-5 border-custom">
+
+          <!-- SDG -->
+          <section class="mb-5">
+            <h2 class="fw-bold mb-3"><i class="bi bi-globe text-primary me-2"></i>UN Sustainable Development Goals</h2>
+            <p class="text-muted">CivicPulse directly supports three of the United Nations' 17 Sustainable Development Goals:</p>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="d-flex align-items-start p-3 border rounded">
+                  <div class="bg-success text-white rounded px-3 py-2 fw-bold fs-5 me-3 flex-shrink-0">6</div>
+                  <div><h6 class="fw-bold mb-1">Clean Water &amp; Sanitation</h6><p class="text-muted small mb-0">Resolving water leakage, drainage blockages, and public hygiene defects promptly.</p></div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="d-flex align-items-start p-3 border rounded">
+                  <div class="bg-warning text-dark rounded px-3 py-2 fw-bold fs-5 me-3 flex-shrink-0">9</div>
+                  <div><h6 class="fw-bold mb-1">Industry, Innovation &amp; Infrastructure</h6><p class="text-muted small mb-0">Smart workflows for structural problem capture and repair pipeline scheduling.</p></div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="d-flex align-items-start p-3 border rounded">
+                  <div class="bg-danger text-white rounded px-3 py-2 fw-bold fs-5 me-3 flex-shrink-0">11</div>
+                  <div><h6 class="fw-bold mb-1">Sustainable Cities &amp; Communities</h6><p class="text-muted small mb-0">Digital citizen participation for cleaner roads, safe lighting, and community safety.</p></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="my-5 border-custom">
+
+          <!-- Contact -->
+          <section class="mb-3">
+            <h2 class="fw-bold mb-3"><i class="bi bi-envelope-fill text-primary me-2"></i>Contact &amp; Support</h2>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="card p-3 text-center border-0 bg-light">
+                  <i class="bi bi-envelope text-primary fs-3 mb-2"></i>
+                  <div class="fw-semibold">General Enquiries</div>
+                  <div class="text-muted small">support@civicpulse.gov.in</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card p-3 text-center border-0 bg-light">
+                  <i class="bi bi-telephone text-primary fs-3 mb-2"></i>
+                  <div class="fw-semibold">Helpdesk</div>
+                  <div class="text-muted small">1800-XXX-CIVIC (Toll Free)</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card p-3 text-center border-0 bg-light">
+                  <i class="bi bi-geo-alt text-primary fs-3 mb-2"></i>
+                  <div class="fw-semibold">Head Office</div>
+                  <div class="text-muted small">Municipal Corp HQ, Civic Centre, New Delhi — 110001</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4 bg-dark text-white border-top border-custom mt-auto">
+    <div class="container text-center">
+      <p class="mb-1">&copy; 2026 CivicPulse Municipal Corporation. All Rights Reserved.</p>
+      <div class="d-flex justify-content-center gap-3">
+        <a href="about.html" class="text-white-50 text-decoration-none small">About Us</a>
+        <span class="text-white-50">•</span>
+        <a href="terms.html" class="text-white-50 text-decoration-none small">Terms of Service</a>
+        <span class="text-white-50">•</span>
+        <a href="privacy.html" class="text-white-50 text-decoration-none small">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common.js"></script>
+</body>
+</html>

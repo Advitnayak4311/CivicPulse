@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicPulse - Smart Civic Issues Monitoring and Response System</title>
+  <meta name="description" content="Centralized system for reporting civic infrastructure problems and tracking real-time municipal responses.">
+  
+  <!-- CDNs for Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Common Navigation Bar -->
+  <div id="common-navbar"></div>
+
+  <!-- Hero Section -->
+  <header class="hero-section text-center text-lg-start d-flex align-items-center">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <span class="badge bg-primary px-3 py-2 rounded-pill mb-3" data-translate="empowering_communities">Empowering Communities</span>
+          <h1 class="display-4 fw-bold text-white mb-3" data-translate="hero_title">Smart Civic Issues Monitoring & Response</h1>
+          <p class="lead text-white-50 mb-4" data-translate="hero_subtitle">Report local infrastructure repairs directly to municipal offices. Capture location details instantly, track the live repair workflow, and help build smarter, cleaner cities.</p>
+          <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+            <a href="register.html" class="btn btn-primary btn-lg px-4"><i class="bi bi-file-earmark-plus me-2"></i><span data-translate="report_issue">Report New Issue</span></a>
+            <a href="about.html" class="btn btn-outline-light btn-lg px-4" data-translate="how_it_works">How it Works</a>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card bg-white bg-opacity-10 border-0 p-4 rounded-4 shadow-lg text-white backdrop-blur">
+            <h3 class="fw-bold mb-2"><i class="bi bi-search text-primary me-2"></i><span data-translate="track_complaint">Track Your Complaint</span></h3>
+            <p class="text-white-50 small mb-3" data-translate="track_instruction">Enter your Complaint Reference ID (e.g. <strong>CIV-20240710-XXXXX</strong>) to check the live status. No login required.</p>
+            <div class="input-group mb-2">
+              <input type="text" id="public-track-input" class="form-control form-control-lg" placeholder="CIV-XXXXXXXX-XXXXX" data-translate-placeholder="track_placeholder" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:white;" />
+              <button class="btn btn-primary btn-lg px-4" onclick="publicTrackComplaint()" id="public-track-btn">
+                <i class="bi bi-send-fill"></i> <span data-translate="track_btn">Track</span>
+              </button>
+            </div>
+            <div id="public-track-result" class="mt-3 d-none">
+              <div class="list-group-item bg-white bg-opacity-10 text-white rounded-3 p-3">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <h6 class="mb-0 text-primary fw-bold" id="ptr-id">CIV-XXXXXX</h6>
+                  <span class="badge" id="ptr-status-badge">Submitted</span>
+                </div>
+                <p class="mb-1 small fw-semibold" id="ptr-title">-</p>
+                <p class="mb-1 text-white-50 small" id="ptr-category">-</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-white-50" id="ptr-dept">-</small>
+                  <a id="ptr-details-link" href="#" class="btn btn-sm btn-outline-light py-0 px-2"><i class="bi bi-arrow-right"></i> Details</a>
+                </div>
+              </div>
+            </div>
+            <div id="public-track-error" class="mt-2 text-warning small d-none"><i class="bi bi-exclamation-triangle me-1"></i><span id="public-track-error-msg"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Platform Banner -->
+  <section class="py-4 bg-white border-bottom border-custom">
+    <div class="container">
+      <div class="row g-3 align-items-center text-center">
+        <div class="col-md-4">
+          <div class="d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-shield-check fs-3 text-primary"></i>
+            <div class="text-start">
+              <div class="fw-bold">End-to-End Tracking</div>
+              <div class="text-muted small">Full lifecycle visibility</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-lightning-charge-fill fs-3 text-warning"></i>
+            <div class="text-start">
+              <div class="fw-bold">Auto Department Assignment</div>
+              <div class="text-muted small">Smart category routing</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-geo-alt-fill fs-3 text-danger"></i>
+            <div class="text-start">
+              <div class="fw-bold">GPS-Precise Location</div>
+              <div class="text-muted small">Pinpoint issue coordinates</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works -->
+  <section class="py-5 bg-light-custom">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold" data-translate="how_title">How CivicPulse Works</h2>
+        <p class="text-muted-custom" data-translate="how_subtitle">Report and tracking has never been this straightforward.</p>
+      </div>
+      <div class="row g-4 text-center">
+        <div class="col-md-4">
+          <div class="card h-100 p-4">
+            <div class="card-body">
+              <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                <i class="bi bi-pin-map fs-3"></i>
+              </div>
+              <h4 class="card-title fw-bold" data-translate="how_step1_title">1. Capture Details</h4>
+              <p class="card-text text-muted-custom" data-translate="how_step1_desc">Select categories, upload photos of the breakdown, and pin location automatically via GPS or click the map.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 p-4">
+            <div class="card-body">
+              <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                <i class="bi bi-send-fill fs-3"></i>
+              </div>
+              <h4 class="card-title fw-bold" data-translate="how_step2_title">2. Auto-Assign</h4>
+              <p class="card-text text-muted-custom" data-translate="how_step2_desc">Our system assigns the issue to the relevant department immediately using rules to avoid response lag.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 p-4">
+            <div class="card-body">
+              <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                <i class="bi bi-clock-history fs-3"></i>
+              </div>
+              <h4 class="card-title fw-bold" data-translate="how_step3_title">3. Track Timeline</h4>
+              <p class="card-text text-muted-custom" data-translate="how_step3_desc">Follow the progress live, view images of repairs before/after, and verify execution status yourself.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SDGs Connection Section -->
+  <section class="py-5 bg-white border-bottom border-custom">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold" data-translate="sdg_title">Supporting Global Sustainability</h2>
+        <p class="text-muted-custom" data-translate="sdg_subtitle">Aligned with United Nations Sustainable Development Goals (SDGs).</p>
+      </div>
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4">
+          <div class="d-flex align-items-start mb-4">
+            <div class="bg-success text-white rounded p-3 me-3 fw-bold fs-4">6</div>
+            <div>
+              <h5 class="fw-bold" data-translate="sdg_6_title">Clean Water & Sanitation</h5>
+              <p class="text-muted-custom small" data-translate="sdg_6_desc">Reporting and resolving water leakages, drainage blockages, and public sanitation defects promptly.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex align-items-start mb-4">
+            <div class="bg-warning text-dark rounded p-3 me-3 fw-bold fs-4">9</div>
+            <div>
+              <h5 class="fw-bold" data-translate="sdg_9_title">Industry, Innovation & Infrastructure</h5>
+              <p class="text-muted-custom small" data-translate="sdg_9_desc">Deploying smart workflows to capture structural problems and schedule repair pipelines.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex align-items-start mb-4">
+            <div class="bg-danger text-white rounded p-3 me-3 fw-bold fs-4">11</div>
+            <div>
+              <h5 class="fw-bold" data-translate="sdg_11_title">Sustainable Cities & Communities</h5>
+              <p class="text-muted-custom small" data-translate="sdg_11_desc">Promoting digital citizen participation to ensure clean roads, safe lighting, and community safety.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🚨 Emergency Report Section -->
+  <section class="py-5" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);">
+    <div class="container text-center text-white">
+      <div class="d-flex justify-content-center mb-3">
+        <div class="rounded-circle bg-white bg-opacity-10 d-flex align-items-center justify-content-center" style="width:64px;height:64px;">
+          <i class="bi bi-exclamation-triangle-fill text-white fs-2"></i>
+        </div>
+      </div>
+      <h2 class="fw-bold mb-2" data-translate="emergency_card_title">Facing a Critical Civic Emergency?</h2>
+      <p class="text-white-50 mb-4 lead" data-translate="emergency_card_desc">Road cave-in, sewage overflow, fallen tree, exposed live wire? Report instantly — no account needed. Just verify with OTP.</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
+        <span class="badge bg-white text-danger px-3 py-2"><i class="bi bi-lightning-charge-fill me-1"></i><span data-translate="emergency_escalation">Instant Escalation</span></span>
+        <span class="badge bg-white text-danger px-3 py-2"><i class="bi bi-shield-lock-fill me-1"></i><span data-translate="emergency_otp">OTP Verified</span></span>
+        <span class="badge bg-white text-danger px-3 py-2"><i class="bi bi-alarm-fill me-1"></i><span data-translate="emergency_priority">Highest Priority</span></span>
+      </div>
+      <a href="emergency.html" class="btn btn-light btn-lg px-5 fw-bold text-danger shadow">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><span data-translate="emergency_card_btn">Report Emergency Now</span>
+      </a>
+      <p class="text-white-50 small mt-3" data-translate="emergency_footer_note">For police, fire, or medical emergencies, call 112 immediately.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 bg-dark text-white border-top border-custom mt-auto">
+    <div class="container text-center">
+      <p class="mb-1" data-translate="copyright">&copy; 2026 CivicPulse Municipal Corporation. All Rights Reserved.</p>
+      <div class="d-flex justify-content-center gap-3">
+        <a href="about.html" class="text-white-50 text-decoration-none small" data-translate="about">About Us</a>
+        <span class="text-white-50">•</span>
+        <a href="terms.html" class="text-white-50 text-decoration-none small" data-translate="terms">Terms of Service</a>
+        <span class="text-white-50">•</span>
+        <a href="privacy.html" class="text-white-50 text-decoration-none small" data-translate="privacy">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    // Status badge CSS class mapper for the public tracking widget
+    const statusBadgeMap = {
+      'Submitted': 'bg-secondary',
+      'Verified': 'bg-info text-dark',
+      'Assigned': 'bg-primary',
+      'Under Review': 'bg-warning text-dark',
+      'Repair Started': 'bg-warning text-dark',
+      'Repair In Progress': 'bg-warning text-dark',
+      'Resolved': 'bg-success',
+      'Closed': 'bg-success',
+      'Rejected': 'bg-danger'
+    };
+
+    /**
+     * Public complaint tracking - queries backend without auth token
+     */
+    async function publicTrackComplaint() {
+      const input = document.getElementById('public-track-input').value.trim().toUpperCase();
+      const resultBox = document.getElementById('public-track-result');
+      const errorBox = document.getElementById('public-track-error');
+      const errorMsg = document.getElementById('public-track-error-msg');
+
+      // Reset state
+      resultBox.classList.add('d-none');
+      errorBox.classList.add('d-none');
+
+      if (!input) {
+        errorBox.classList.remove('d-none');
+        errorMsg.textContent = 'Please enter a Complaint Reference ID.';
+        return;
+      }
+
+      const btn = document.getElementById('public-track-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Searching...';
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/complaints/track/${input}`);
+        const data = await response.json();
+
+        if (data.success) {
+          const c = data.data;
+          document.getElementById('ptr-id').textContent = c.complaintId;
+          document.getElementById('ptr-title').textContent = c.title;
+          document.getElementById('ptr-category').textContent = `${c.category} • Priority: ${c.priority}`;
+          document.getElementById('ptr-dept').textContent = c.departmentId ? c.departmentId.departmentName : 'Unassigned';
+          const badge = document.getElementById('ptr-status-badge');
+          badge.textContent = c.status;
+          badge.className = 'badge ' + (statusBadgeMap[c.status] || 'bg-secondary');
+          document.getElementById('ptr-details-link').href = `complaint-details.html?ref=${c.complaintId}`;
+          resultBox.classList.remove('d-none');
+        } else {
+          errorBox.classList.remove('d-none');
+          errorMsg.textContent = data.message || 'Complaint not found. Please check the Reference ID.';
+        }
+      } catch (err) {
+        errorBox.classList.remove('d-none');
+        errorMsg.textContent = 'Could not reach the server. Please make sure the backend is running.';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send-fill"></i> Track';
+      }
+    }
+
+    // Allow pressing Enter in the tracking input
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('public-track-input');
+      if (input) {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') publicTrackComplaint();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

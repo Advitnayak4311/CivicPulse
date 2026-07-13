@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Civic Issue - CivicPulse</title>
+  
+  <!-- CDNs for Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Common Navigation Bar -->
+  <div id="common-navbar"></div>
+
+  <div class="dashboard-wrapper flex-grow-1">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="p-3 border-bottom border-custom">
+        <h5 class="fw-bold mb-0 text-primary" data-translate="citizen_portal">Citizen Portal</h5>
+      </div>
+      <nav class="d-flex flex-column mt-3">
+        <a href="citizen.html" class="sidebar-link"><i class="bi bi-grid-fill"></i><span data-translate="sidebar_dashboard">Dashboard</span></a>
+        <a href="complaint-form.html" class="sidebar-link active"><i class="bi bi-file-earmark-plus-fill"></i><span data-translate="sidebar_report_issue">Report Issue</span></a>
+        <a href="profile.html" class="sidebar-link"><i class="bi bi-person-fill-gear"></i><span data-translate="sidebar_profile">My Profile</span></a>
+        <hr class="mx-3 border-custom">
+        <a href="#" onclick="logout(); return false;" class="sidebar-link text-danger"><i class="bi bi-box-arrow-right"></i><span data-translate="sidebar_logout">Logout</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div class="card p-4 shadow-sm border-0 mb-4">
+            <h2 class="fw-bold mb-1"><i class="bi bi-megaphone text-primary me-2"></i><span data-translate="form_report_new">Report a New Civic Issue</span></h2>
+            <p class="text-muted-custom" data-translate="form_report_desc">Provide detailed information and location details to help municipal engineers act quickly.</p>
+            <hr class="my-3 border-custom">
+
+            <!-- Duplicate Warning Alert Box (Hidden by default) -->
+            <div id="duplicate-warning-box" class="alert alert-warning d-none border-4 border-start border-warning p-4 mb-4" role="alert">
+              <div class="d-flex">
+                <i class="bi bi-exclamation-triangle-fill fs-3 text-warning me-3"></i>
+                <div>
+                  <h4 class="alert-heading fw-bold" data-translate="duplicate_warning_title">Similar Unresolved Issue Detected Nearby!</h4>
+                  <p class="mb-3" data-translate="duplicate_warning_desc">Our system detected a similar unresolved issue reported within 100 meters of your pinned coordinates. Supporting an existing ticket speeds up resolution and prevents administrative clutter.</p>
+                  
+                  <div class="card bg-white p-3 mb-3 text-dark shadow-sm">
+                    <h6 class="fw-bold mb-1" id="duplicate-title">Existing Pothole Complaint</h6>
+                    <p class="mb-2 text-muted small" id="duplicate-desc">Pothole reported near Green Street crossing.</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="badge bg-secondary" id="duplicate-status">Submitted</span>
+                      <span class="small text-muted"><i class="bi bi-geo-alt-fill text-danger me-1"></i><span data-translate="details_map_title">Distance</span>: <strong id="duplicate-distance">12m</strong></span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <button type="button" id="btn-support-duplicate" class="btn btn-warning fw-bold text-dark">
+                      <i class="bi bi-hand-thumbs-up-fill me-2"></i><span data-translate="details_support_btn">Support Existing Issue Instead</span>
+                    </button>
+                    <button type="button" id="btn-bypass-duplicate" class="btn btn-outline-dark" data-translate="bypass_duplicate">
+                      Create Duplicate Ticket Anyway
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Main Form -->
+            <form id="complaint-submit-form" novalidate>
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="mb-3">
+                    <label for="title" class="form-label fw-bold" data-translate="form_title_label">Short Title / Headline</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="title" required placeholder="e.g. Large pothole near central crossroad" data-translate-placeholder="form_title_placeholder">
+                      <button type="button" class="btn btn-outline-secondary" id="btn-voice-title" title="Speak Title" data-translate-title="emergency_mic_title"><i class="bi bi-mic-fill"></i></button>
+                    </div>
+                    <div class="invalid-feedback">A title is required.</div>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label for="category" class="form-label fw-bold" data-translate="form_category_label">Issue Category</label>
+                    <select class="form-select" id="category" required>
+                      <option value="" disabled selected data-translate="form_category_placeholder">Select a category</option>
+                      <option value="Road Damage" data-translate="cat_road_damage">Road Damage</option>
+                      <option value="Potholes" data-translate="cat_potholes">Potholes</option>
+                      <option value="Garbage Overflow" data-translate="cat_garbage_overflow">Garbage Overflow</option>
+                      <option value="Drainage Blockage" data-translate="cat_drainage_blockage">Drainage Blockage</option>
+                      <option value="Street Light Failure" data-translate="cat_street_light_failure">Street Light Failure</option>
+                      <option value="Water Leakage" data-translate="cat_water_leakage">Water Leakage</option>
+                      <option value="Water Supply Issue" data-translate="cat_water_supply_issue">Water Supply Issue</option>
+                      <option value="Public Sanitation" data-translate="cat_public_sanitation">Public Sanitation</option>
+                      <option value="Tree Fallen" data-translate="cat_tree_fallen">Tree Fallen</option>
+                      <option value="Broken Footpath" data-translate="cat_broken_footpath">Broken Footpath</option>
+                      <option value="Traffic Signal Issue" data-translate="cat_traffic_signal_issue">Traffic Signal Issue</option>
+                      <option value="Public Property Damage" data-translate="cat_public_property_damage">Public Property Damage</option>
+                      <option value="Other" data-translate="cat_other">Other</option>
+                    </select>
+                    <div class="invalid-feedback">Category selection is required.</div>
+                  </div>
+                </div>
+                
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="priority" class="form-label fw-bold" data-translate="form_priority_label">Urgency / Priority</label>
+                    <select class="form-select" id="priority">
+                      <option value="Low" data-translate="priority_low">Low</option>
+                      <option value="Medium" selected data-translate="priority_medium">Medium</option>
+                      <option value="High" data-translate="priority_high">High</option>
+                      <option value="Emergency" data-translate="priority_emergency">Emergency</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="description" class="form-label fw-bold" data-translate="form_desc_label">Detailed Description</label>
+                <div class="input-group">
+                  <textarea class="form-control" id="description" rows="3" required placeholder="Describe the size, impact, hazards, and other helpful remarks..." data-translate-placeholder="form_desc_placeholder"></textarea>
+                  <button type="button" class="btn btn-outline-secondary" id="btn-voice-desc" title="Speak Description" data-translate-title="emergency_mic_title" style="border-top-right-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius);"><i class="bi bi-mic-fill"></i></button>
+                </div>
+                <div class="invalid-feedback">Description details are required.</div>
+              </div>
+
+              <!-- AI Suggestion Box -->
+              <div id="ai-suggestion-box" class="alert alert-info d-none border-2 border-start border-info p-3 mb-4" role="alert">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                  <div>
+                    <span class="fw-bold"><i class="bi bi-cpu-fill text-primary me-2"></i><span data-translate="ai_suggestion">AI Suggestion:</span></span>
+                    <span class="ms-1" id="ai-suggestion-text">Category 'Potholes' & Priority 'High'</span>
+                  </div>
+                  <button type="button" class="btn btn-primary btn-sm fw-bold px-3" id="btn-apply-ai">
+                    <i class="bi bi-magic me-1"></i><span data-translate="apply_ai">Apply AI Recommendations</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Photo Upload Section -->
+              <div class="mb-4">
+                <label class="form-label fw-bold" data-translate="form_photo_label">Attach Photo (Max 5MB • JPG, PNG)</label>
+                <div class="border rounded p-3 bg-light text-center">
+                  <input type="file" class="form-control mb-2" id="image" accept=".png, .jpg, .jpeg">
+                  <div class="d-flex gap-2 justify-content-center mb-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm px-3" id="btn-open-camera">
+                      <i class="bi bi-camera-fill me-1"></i><span data-translate="form_camera_btn">Take Live Photo</span>
+                    </button>
+                  </div>
+                  <div class="small text-muted mb-2" data-translate="form_photo_help">Upload visual evidence or take a photo to help workers locate the damage easily.</div>
+                  
+                  <!-- File preview container -->
+                  <div id="image-preview-container" class="d-none">
+                    <img id="image-preview" src="#" alt="Preview" class="img-thumbnail rounded" style="max-height: 200px;">
+                    <div class="mt-2">
+                      <button type="button" class="btn btn-outline-danger btn-sm" id="btn-remove-photo">
+                        <i class="bi bi-trash"></i> <span data-translate="form_remove_photo">Remove Photo</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Location Selection -->
+              <div class="mb-4">
+                <label class="form-label fw-bold d-flex justify-content-between align-items-center">
+                  <span data-translate="form_location_label">Pinpoint Issue Location</span>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-auto-gps">
+                    <i class="bi bi-cursor-fill me-1"></i><span data-translate="form_gps_btn">Use GPS Location</span>
+                  </button>
+                </label>
+                
+                <div class="row g-2 mb-2">
+                  <div class="col-6">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-text bg-light" data-translate="form_latitude_label">Latitude</span>
+                      <input type="text" class="form-control bg-light" id="latitude" readonly required placeholder="0.000000">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-text bg-light" data-translate="form_longitude_label">Longitude</span>
+                      <input type="text" class="form-control bg-light" id="longitude" readonly required placeholder="0.000000">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- GPS Status Indicator -->
+                <div id="gps-status-display" class="mb-2">
+                  <i class="bi bi-info-circle me-1"></i>Click "Use GPS Location" or drag the pin on the map below.
+                </div>
+
+                <!-- Leaflet Manual Map Container -->
+                <div class="mb-1 text-muted small"><i class="bi bi-info-circle me-1"></i><span data-translate="form_location_desc">Click on the map below to set coordinates manually.</span></div>
+                <div id="map-picker"></div>
+
+              </div>
+
+              <div class="d-flex gap-2 justify-content-end">
+                <a href="citizen.html" class="btn btn-outline-secondary px-4" data-translate="profile_cancel">Cancel</a>
+                <button type="submit" class="btn btn-primary px-5 fw-bold" id="btn-submit">
+                  <i class="bi bi-send me-2"></i><span data-translate="form_submit_btn">Submit Complaint</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Camera Modal -->
+  <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="cameraModalLabel"><i class="bi bi-camera-fill text-primary me-2"></i><span data-translate="form_camera_btn">Take Live Photo</span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-camera-close-x"></button>
+        </div>
+        <div class="modal-body text-center p-3">
+          <div class="position-relative bg-dark rounded overflow-hidden mb-3" style="min-height: 240px; aspect-ratio: 4/3;">
+            <video id="camera-stream" autoplay playsinline class="w-100 h-100 rounded bg-dark" style="object-fit: cover; transform: scaleX(-1);"></video>
+            <canvas id="camera-canvas" class="d-none"></canvas>
+            
+            <div id="camera-loader" class="position-absolute top-50 start-50 translate-middle text-white text-center">
+              <div class="spinner-border text-light mb-2" role="status"></div>
+              <div data-translate="camera_accessing">Accessing camera...</div>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-end align-items-center">
+            <button type="button" id="btn-switch-camera" class="btn btn-outline-secondary btn-sm d-none">
+              <i class="bi bi-arrow-repeat me-1"></i><span data-translate="camera_switch">Switch Camera</span>
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-camera-cancel" data-translate="profile_cancel">Cancel</button>
+          <button type="button" class="btn btn-primary fw-bold" id="btn-camera-capture">
+            <i class="bi bi-camera me-1"></i><span data-translate="capture_photo">Capture Photo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="py-4 bg-dark text-white border-top border-custom">
+    <div class="container text-center">
+      <p class="mb-0" data-translate="copyright">&copy; 2026 CivicPulse. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/form.js"></script>
+</body>
+</html>

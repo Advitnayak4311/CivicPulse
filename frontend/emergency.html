@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚨 Emergency Issue Report - CivicPulse</title>
+  <meta name="description" content="Report critical civic emergencies instantly without registration. Verify with OTP and get your issue escalated to the highest priority.">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ── Emergency Page Specific Styles ── */
+    .emergency-hero {
+      background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #ef4444 100%);
+      color: white;
+      padding: 60px 0 40px;
+    }
+
+    .emergency-pulse {
+      animation: pulse-ring 2s ease-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+      70%  { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
+
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 32px;
+    }
+
+    .step-dot {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px;
+      background: #e5e7eb; color: #6b7280;
+      border: 2px solid #e5e7eb;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-dot.active {
+      background: #dc2626; color: white; border-color: #dc2626;
+    }
+
+    .step-dot.done {
+      background: #16a34a; color: white; border-color: #16a34a;
+    }
+
+    .step-line {
+      height: 3px; width: 60px;
+      background: #e5e7eb;
+      transition: background 0.3s ease;
+    }
+
+    .step-line.done { background: #16a34a; }
+
+    .otp-input-row {
+      display: flex; gap: 8px; justify-content: center;
+    }
+
+    .otp-digit {
+      width: 52px; height: 60px;
+      text-align: center;
+      font-size: 28px; font-weight: 700;
+      border: 2px solid #d1d5db;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+      background: white;
+    }
+
+    .otp-digit:focus {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
+    }
+
+    .otp-digit.filled { border-color: #dc2626; color: #dc2626; }
+
+    .emergency-card {
+      border: 2px solid #fee2e2;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(220, 38, 38, 0.08);
+    }
+
+    .success-checkmark {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: #dcfce7;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 40px;
+    }
+
+    .timer-badge {
+      font-size: 13px; font-weight: 600;
+      color: #dc2626;
+    }
+
+    #emergency-map { height: 240px; border-radius: 12px; overflow: hidden; }
+
+    .category-btn {
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+      font-weight: 500;
+      background: white;
+      text-align: center;
+    }
+
+    .category-btn:hover { border-color: #dc2626; color: #dc2626; }
+    .category-btn.selected {
+      border-color: #dc2626;
+      background: #fff5f5;
+      color: #dc2626;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Common Navigation Bar -->
+  <div id="common-navbar"></div>
+
+  <!-- Emergency Hero Header -->
+  <header class="emergency-hero">
+    <div class="container text-center">
+      <div class="d-flex justify-content-center mb-3">
+        <div class="emergency-pulse rounded-circle bg-white d-flex align-items-center justify-content-center" style="width:72px;height:72px;">
+          <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
+        </div>
+      </div>
+      <h1 class="fw-bold display-5 mb-2" data-translate="emergency_title">Emergency Civic Issue Report</h1>
+      <p class="text-white-50 lead mb-1" data-translate="emergency_subtitle">For life-threatening or critical infrastructure emergencies only.</p>
+      <p class="text-white-50 small" data-translate="emergency_desc_note">No registration required — verify with OTP and report instantly. Your complaint gets highest priority.</p>
+      <div class="d-flex justify-content-center gap-3 mt-3 flex-wrap">
+        <span class="badge bg-white text-danger px-3 py-2"><i class="bi bi-lightning-charge-fill me-1"></i><span data-translate="emergency_escalation">Instant Escalation</span></span>
+        <span class="badge bg-white text-danger px-3 py-2"><i class="bi bi-shield-lock-fill me-1"></i><span data-translate="emergency_otp">OTP Verified</span></span>
+        <span class="badge bg-white text-danger px-3 py-2"><i class="bi bi-person-x-fill me-1"></i><span data-translate="no_login_needed">No Login Needed</span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow-1 py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-7 col-xl-6">
+
+          <!-- Step Indicator -->
+          <div class="step-indicator" id="step-indicator">
+            <div class="step-dot active" id="dot-1">1</div>
+            <div class="step-line" id="line-1"></div>
+            <div class="step-dot" id="dot-2">2</div>
+            <div class="step-line" id="line-2"></div>
+            <div class="step-dot" id="dot-3">3</div>
+          </div>
+
+          <!-- ══════════════════════════════════ -->
+          <!-- STEP 1: Contact Info + Send OTP    -->
+          <!-- ══════════════════════════════════ -->
+          <div id="step-1" class="card emergency-card p-4 p-md-5">
+            <div class="mb-4">
+              <h4 class="fw-bold mb-1"><i class="bi bi-shield-lock-fill text-danger me-2"></i><span data-translate="emergency_step1">Step 1: Verify Identity</span></h4>
+              <p class="text-muted small mb-0" data-translate="emergency_step1_desc">Select a verification method to receive a secure OTP code for reporting.</p>
+            </div>
+
+            <!-- Verification Tabs -->
+            <ul class="nav nav-pills nav-fill mb-4 p-1 bg-light rounded-3" id="verification-method" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="email-tab" data-bs-toggle="pill" data-bs-target="#email-pane" type="button" role="tab" aria-selected="true"><i class="bi bi-envelope-fill me-2"></i><span data-translate="email_otp">Email OTP</span></button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="phone-tab" data-bs-toggle="pill" data-bs-target="#phone-pane" type="button" role="tab" aria-selected="false"><i class="bi bi-telephone-fill me-2"></i><span data-translate="phone_otp">Phone OTP</span></button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="verification-tab-content">
+              <!-- Email Pane -->
+              <div class="tab-pane fade show active" id="email-pane" role="tabpanel" aria-labelledby="email-tab">
+                <div class="mb-4">
+                  <label class="form-label fw-semibold"><span data-translate="profile_email">Email Address</span> <span class="text-danger">*</span></label>
+                  <input type="email" id="em-email" class="form-control form-control-lg" placeholder="your@email.com">
+                  <div class="form-text" data-translate="email_otp_help">OTP will be sent to this email for instant verification.</div>
+                </div>
+              </div>
+              
+              <!-- Phone Pane -->
+              <div class="tab-pane fade" id="phone-pane" role="tabpanel" aria-labelledby="phone-tab">
+                <div class="mb-4">
+                  <label class="form-label fw-semibold"><span data-translate="emergency_phone_label">Phone Number</span> <span class="text-danger">*</span></label>
+                  <input type="tel" id="em-phone" class="form-control form-control-lg" placeholder="Enter 10-digit phone number" data-translate-placeholder="emergency_phone_placeholder" maxlength="10">
+                  <div class="form-text" data-translate="phone_otp_help">OTP will be sent via SMS (simulated) to this phone number.</div>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-danger btn-lg w-100 py-3 fw-bold" id="btn-send-otp" onclick="sendOtp()">
+              <i class="bi bi-lightning-fill me-2"></i><span data-translate="emergency_send_otp">Send OTP Code</span>
+            </button>
+
+            <div class="mt-4 p-3 bg-light rounded-3 border border-warning-subtle">
+              <p class="small text-muted mb-1"><i class="bi bi-info-circle-fill text-warning me-1"></i><strong>Already have a citizen account?</strong></p>
+              <p class="small text-muted mb-0">You can <a href="login.html" class="text-danger fw-semibold">log in</a> and file a complaint with Emergency priority from your dashboard instead.</p>
+            </div>
+          </div>
+
+          <!-- ══════════════════════════════════ -->
+          <!-- STEP 2: OTP Verification           -->
+          <!-- ══════════════════════════════════ -->
+          <div id="step-2" class="card emergency-card p-4 p-md-5 d-none">
+            <div class="text-center mb-4">
+              <div class="rounded-circle bg-danger bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;">
+                <i class="bi bi-shield-lock-fill text-danger fs-2"></i>
+              </div>
+              <h4 class="fw-bold mb-1" data-translate="emergency_verify_otp">Verify Your Identity</h4>
+              <p class="text-muted small mb-1"><span data-translate="otp_sent_to">Enter the 6-digit OTP sent to</span> <strong id="otp-target-email"></strong></p>
+              <span class="timer-badge" id="otp-timer">⏱ OTP valid for 10:00</span>
+            </div>
+
+            <!-- OTP Input Boxes -->
+            <div class="otp-input-row mb-4" id="otp-boxes">
+              <input type="text" maxlength="1" class="otp-digit" data-idx="0" oninput="otpInput(this)" onkeydown="otpKeydown(event, this)">
+              <input type="text" maxlength="1" class="otp-digit" data-idx="1" oninput="otpInput(this)" onkeydown="otpKeydown(event, this)">
+              <input type="text" maxlength="1" class="otp-digit" data-idx="2" oninput="otpInput(this)" onkeydown="otpKeydown(event, this)">
+              <input type="text" maxlength="1" class="otp-digit" data-idx="3" oninput="otpInput(this)" onkeydown="otpKeydown(event, this)">
+              <input type="text" maxlength="1" class="otp-digit" data-idx="4" oninput="otpInput(this)" onkeydown="otpKeydown(event, this)">
+              <input type="text" maxlength="1" class="otp-digit" data-idx="5" oninput="otpInput(this)" onkeydown="otpKeydown(event, this)">
+            </div>
+
+            <button class="btn btn-danger btn-lg w-100 py-3 fw-bold mb-3" id="btn-verify-otp" onclick="verifyOtp()">
+              <i class="bi bi-check-circle-fill me-2"></i><span data-translate="emergency_verify_otp">Verify OTP & Continue</span>
+            </button>
+
+            <p class="text-center small text-muted mb-0">
+              Didn't receive?
+              <button class="btn btn-link btn-sm p-0 text-danger fw-semibold" id="btn-resend" onclick="resendOtp()" disabled>
+                Resend OTP <span id="resend-timer">(30s)</span>
+              </button>
+            </p>
+          </div>
+
+          <!-- ══════════════════════════════════ -->
+          <!-- STEP 3: Issue Details              -->
+          <!-- ══════════════════════════════════ -->
+          <div id="step-3" class="card emergency-card p-4 p-md-5 d-none">
+            <div class="mb-4">
+              <h4 class="fw-bold mb-1"><i class="bi bi-clipboard2-pulse-fill text-danger me-2"></i><span data-translate="emergency_form_title">Describe the Emergency</span></h4>
+              <p class="text-muted small mb-0" data-translate="emergency_step2">Provide clear details so authorities can respond quickly.</p>
+            </div>
+
+            <!-- Issue Category Selection -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold"><span data-translate="form_category_label">Issue Category</span> <span class="text-danger">*</span></label>
+              <div class="row g-2" id="em-category-grid">
+                <div class="col-6"><div class="category-btn" data-val="Road Damage" onclick="selectCategory(this)"><i class="bi bi-cone-striped me-1 text-danger"></i><span data-translate="Road Damage">Road Damage</span></div></div>
+                <div class="col-6"><div class="category-btn" data-val="Drainage Blockage" onclick="selectCategory(this)"><i class="bi bi-droplet-fill me-1 text-danger"></i><span data-translate="Drainage Blockage">Drainage Blockage</span></div></div>
+                <div class="col-6"><div class="category-btn" data-val="Street Light Failure" onclick="selectCategory(this)"><i class="bi bi-lightning-fill me-1 text-danger"></i><span data-translate="Street Light Failure">Street Light Failure</span></div></div>
+                <div class="col-6"><div class="category-btn" data-val="Water Leakage" onclick="selectCategory(this)"><i class="bi bi-water me-1 text-danger"></i><span data-translate="Water Leakage">Water Leakage</span></div></div>
+                <div class="col-6"><div class="category-btn" data-val="Tree Fallen" onclick="selectCategory(this)"><i class="bi bi-tree-fill me-1 text-danger"></i><span data-translate="Tree Fallen">Tree Fallen / Hazard</span></div></div>
+                <div class="col-6"><div class="category-btn" data-val="Other" onclick="selectCategory(this)"><i class="bi bi-exclamation-circle me-1 text-danger"></i><span data-translate="Other">Other Emergency</span></div></div>
+              </div>
+              <input type="hidden" id="em-category">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold" data-translate="form_title_label">Complaint Title</label>
+              <div class="input-group">
+                <input type="text" id="em-title" class="form-control" placeholder="Brief summary of the emergency (e.g. Large pothole blocking road)" data-translate-placeholder="form_title_placeholder" maxlength="100">
+                <button type="button" class="btn btn-outline-danger" id="btn-voice-em-title" title="Speak Title" data-translate-title="emergency_mic_title"><i class="bi bi-mic-fill"></i></button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold" data-translate="form_desc_label">Detailed Description</label>
+              <div class="input-group">
+                <textarea id="em-description" class="form-control" rows="4" placeholder="Describe the emergency in detail — what happened, severity, any danger to life or property..." data-translate-placeholder="form_desc_placeholder"></textarea>
+                <button type="button" class="btn btn-outline-danger" id="btn-voice-em-desc" title="Speak Description" data-translate-title="emergency_mic_title" style="border-top-right-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius);"><i class="bi bi-mic-fill"></i></button>
+              </div>
+            </div>
+
+            <!-- Location -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold"><i class="bi bi-geo-alt-fill text-danger me-1"></i><span data-translate="form_location_label">Pin Location</span> <span class="text-danger">*</span></label>
+              <button type="button" class="btn btn-outline-danger btn-sm ms-2 mb-2" onclick="captureGPS()">
+                <i class="bi bi-crosshair2 me-1"></i><span data-translate="form_gps_btn">Use My GPS Location</span>
+              </button>
+              <div id="emergency-map" class="mb-2"></div>
+              <div class="row g-2">
+                <div class="col-6">
+                  <label class="form-label small" data-translate="form_latitude_label">Latitude</label>
+                  <input type="text" id="em-lat" class="form-control form-control-sm" placeholder="12.9716" readonly>
+                </div>
+                <div class="col-6">
+                  <label class="form-label small" data-translate="form_longitude_label">Longitude</label>
+                  <input type="text" id="em-lon" class="form-control form-control-sm" placeholder="77.5946" readonly>
+                </div>
+              </div>
+            </div>
+
+            <!-- Optional Image -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold" data-translate="form_photo_label">Upload Evidence Photo</label>
+              <input type="file" id="em-image" class="form-control mb-2" accept="image/*">
+              <button type="button" class="btn btn-outline-danger btn-sm w-100" id="btn-open-camera">
+                <i class="bi bi-camera-fill me-1"></i><span data-translate="form_camera_btn">Take Live Photo</span>
+              </button>
+            </div>
+
+            <button class="btn btn-danger btn-lg w-100 py-3 fw-bold" id="btn-submit-emergency" onclick="submitEmergency()">
+              <i class="bi bi-send-fill me-2"></i><span data-translate="emergency_submit_btn">Submit Emergency Complaint</span>
+            </button>
+          </div>
+
+          <!-- ══════════════════════════════════ -->
+          <!-- STEP 4: Success & Helpline Info    -->
+          <!-- ══════════════════════════════════ -->
+          <div id="step-success" class="card emergency-card p-4 p-md-5 d-none text-center">
+            <div class="success-checkmark">✅</div>
+            <h3 class="fw-bold text-success mb-2">Complaint Submitted!</h3>
+            <p class="text-muted mb-3">Your emergency has been escalated with <strong class="text-danger">highest priority</strong> to the concerned department.</p>
+
+            <div class="card bg-light border-0 p-3 mb-4 text-start">
+              <div class="row g-2">
+                <div class="col-12">
+                  <div class="small text-muted">Reference ID</div>
+                  <div class="fw-bold text-danger fs-5" id="success-complaint-id">CIV-XXXXXX</div>
+                </div>
+                <div class="col-6">
+                  <div class="small text-muted">Status</div>
+                  <div class="fw-semibold"><span class="badge bg-danger">Emergency — Submitted</span></div>
+                </div>
+                <div class="col-6">
+                  <div class="small text-muted">Priority</div>
+                  <div class="fw-semibold text-danger">🚨 Emergency</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Extreme Emergency National Contacts -->
+            <div class="card border-danger border-opacity-50 p-3 mb-4 text-start bg-danger bg-opacity-10">
+              <h6 class="fw-bold text-danger mb-2"><i class="bi bi-telephone-fill me-2"></i>Extreme Emergency Helpline Numbers:</h6>
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="small fw-semibold text-dark">🚓 National Emergency</div>
+                  <div class="fw-bold text-danger fs-5">112</div>
+                </div>
+                <div class="col-6">
+                  <div class="small fw-semibold text-dark">🚒 Fire Services</div>
+                  <div class="fw-bold text-danger fs-5">101</div>
+                </div>
+                <div class="col-6">
+                  <div class="small fw-semibold text-dark">🚑 Ambulance Service</div>
+                  <div class="fw-bold text-danger fs-5">102</div>
+                </div>
+                <div class="col-6">
+                  <div class="small fw-semibold text-dark">📞 Disaster Management</div>
+                  <div class="fw-bold text-danger fs-5">108</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-warning text-start">
+              <i class="bi bi-person-plus-fill me-2"></i>
+              <strong>Build your profile:</strong> Register with the same email to access your dashboard, track all your complaints, and receive status notifications.
+              <a href="register.html" class="btn btn-warning btn-sm ms-2 mt-1">Register Now →</a>
+            </div>
+
+            <div class="d-flex gap-2 justify-content-center flex-wrap mt-2">
+              <a href="index.html" class="btn btn-outline-secondary">Back to Home</a>
+              <button class="btn btn-danger" id="btn-track-success" onclick="">Track This Complaint</button>
+            </div>
+          </div>
+
+        </div><!-- /col -->
+      </div><!-- /row -->
+
+      <!-- ── Emergency Types Info Section ── -->
+      <div class="row justify-content-center mt-5">
+        <div class="col-lg-10">
+          <div class="text-center mb-5">
+            <h3 class="fw-bold fs-2 text-dark"><i class="bi bi-shield-fill-exclamation text-danger me-2"></i>When to Use Emergency Report?</h3>
+            <p class="text-muted fs-6">Use this channel exclusively for municipal issues presenting immediate public safety hazards.</p>
+          </div>
+          <div class="row g-4">
+            <div class="col-md-4">
+              <!-- Road Cave-in: Deep orange/terra cotta -->
+              <div class="card h-100 p-4 border-0 shadow-sm transition-card emergency-type-card ec-road">
+                <div class="ec-icon-wrap ec-road-icon mb-3 d-inline-flex align-items-center justify-content-center rounded-circle">
+                  <i class="bi bi-cone-striped fs-4"></i>
+                </div>
+                <h5 class="fw-semibold mb-2 ec-road-title">Road Cave-in / Crater</h5>
+                <p class="small text-muted mb-0">Severe potholes or road collapse that can swallow vehicles or cause fatal traffic accidents.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <!-- Sewage Overflow: Deep purple-violet -->
+              <div class="card h-100 p-4 border-0 shadow-sm transition-card emergency-type-card ec-sewage">
+                <div class="ec-icon-wrap ec-sewage-icon mb-3 d-inline-flex align-items-center justify-content-center rounded-circle">
+                  <i class="bi bi-droplet-fill fs-4"></i>
+                </div>
+                <h5 class="fw-semibold mb-2 ec-sewage-title">Sewage Overflow</h5>
+                <p class="small text-muted mb-0">Severe blockages causing toxic wastewater to flood into residential spaces or blocking arterial streets.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <!-- Fallen Tree: Deep forest green -->
+              <div class="card h-100 p-4 border-0 shadow-sm transition-card emergency-type-card ec-tree">
+                <div class="ec-icon-wrap ec-tree-icon mb-3 d-inline-flex align-items-center justify-content-center rounded-circle">
+                  <i class="bi bi-tree-fill fs-4"></i>
+                </div>
+                <h5 class="fw-semibold mb-2 ec-tree-title">Fallen Tree / Hazard</h5>
+                <p class="small text-muted mb-0">Large trees or heavy branches fully obstructing streets, crushing vehicles, or hanging on high-voltage power lines.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <!-- Exposed Live Wires: Deep amber/gold -->
+              <div class="card h-100 p-4 border-0 shadow-sm transition-card emergency-type-card ec-wire">
+                <div class="ec-icon-wrap ec-wire-icon mb-3 d-inline-flex align-items-center justify-content-center rounded-circle">
+                  <i class="bi bi-lightning-fill fs-4"></i>
+                </div>
+                <h5 class="fw-semibold mb-2 ec-wire-title">Exposed Live Wires</h5>
+                <p class="small text-muted mb-0">Sparks, snapped electrical poles, or exposed cables lying on puddles or footpaths creating immediate electrocution risk.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <!-- Water Main Burst: Deep royal blue -->
+              <div class="card h-100 p-4 border-0 shadow-sm transition-card emergency-type-card ec-water">
+                <div class="ec-icon-wrap ec-water-icon mb-3 d-inline-flex align-items-center justify-content-center rounded-circle">
+                  <i class="bi bi-water fs-4"></i>
+                </div>
+                <h5 class="fw-semibold mb-2 ec-water-title">Water Main Burst</h5>
+                <p class="small text-muted mb-0">Major municipal pipeline ruptures resulting in massive road flooding, structural damage, or severe local water supply cuts.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <!-- Structural Collapse: Deep brown-slate -->
+              <div class="card h-100 p-4 border-0 shadow-sm transition-card emergency-type-card ec-struct">
+                <div class="ec-icon-wrap ec-struct-icon mb-3 d-inline-flex align-items-center justify-content-center rounded-circle">
+                  <i class="bi bi-building-exclamation fs-4"></i>
+                </div>
+                <h5 class="fw-semibold mb-2 ec-struct-title">Structural Collapse</h5>
+                <p class="small text-muted mb-0">Damaged overhead bridges, public buildings, or retaining walls showing signs of imminent structural collapse.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-danger border-2 border-start border-danger p-3 mt-5 d-flex align-items-center gap-3 rounded shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill fs-2 text-danger"></i>
+            <div>
+              <strong class="text-danger">Important Notice:</strong> For police, fire, or medical emergencies, please dial <strong class="fs-5">112</strong> immediately. This quick portal is reserved for reporting critical <strong>civic infrastructure hazards</strong> only.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /container -->
+  </main>
+
+  <!-- Camera Modal -->
+  <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title fw-bold" id="cameraModalLabel"><i class="bi bi-camera-fill me-2"></i>Take Live Photo</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" id="btn-camera-close-x"></button>
+        </div>
+        <div class="modal-body text-center p-3">
+          <div class="position-relative bg-dark rounded overflow-hidden mb-3" style="min-height: 240px; aspect-ratio: 4/3;">
+            <video id="camera-stream" autoplay playsinline class="w-100 h-100 rounded bg-dark" style="object-fit: cover; transform: scaleX(-1);"></video>
+            <canvas id="camera-canvas" class="d-none"></canvas>
+            
+            <div id="camera-loader" class="position-absolute top-50 start-50 translate-middle text-white text-center">
+              <div class="spinner-border text-light mb-2" role="status"></div>
+              <div>Accessing camera...</div>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-end align-items-center">
+            <button type="button" id="btn-switch-camera" class="btn btn-outline-secondary btn-sm d-none">
+              <i class="bi bi-arrow-repeat me-1"></i>Switch Camera
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-camera-cancel">Cancel</button>
+          <button type="button" class="btn btn-danger fw-bold" id="btn-camera-capture">
+            <i class="bi bi-camera me-1"></i>Capture Photo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-4 bg-dark text-white border-top border-custom mt-auto">
+    <div class="container text-center">
+      <p class="mb-1">&copy; 2026 CivicPulse Municipal Corporation. All Rights Reserved.</p>
+      <div class="d-flex justify-content-center gap-3">
+        <a href="about.html" class="text-white-50 text-decoration-none small">About Us</a>
+        <span class="text-white-50">•</span>
+        <a href="terms.html" class="text-white-50 text-decoration-none small">Terms of Service</a>
+        <span class="text-white-50">•</span>
+        <a href="privacy.html" class="text-white-50 text-decoration-none small">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/emergency.js"></script>
+</body>
+</html>
