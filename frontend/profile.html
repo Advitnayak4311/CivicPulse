@@ -140,7 +140,8 @@
       // Handle Avatar Preview & default fallback
       const photoPreview = document.getElementById('prof-photo-preview');
       if (user.profilePhoto) {
-        photoPreview.src = `http://localhost:5000${user.profilePhoto}`;
+        const backendHost = (typeof API_BASE_URL !== 'undefined') ? API_BASE_URL.replace('/api', '') : 'http://localhost:5000';
+        photoPreview.src = `${backendHost}${user.profilePhoto}`;
       } else {
         photoPreview.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&size=128`;
       }
