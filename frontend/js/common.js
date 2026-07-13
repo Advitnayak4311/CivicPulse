@@ -3,7 +3,7 @@
    ========================================================================== */
 
 // Base API configuration (Render backend URL can replace this in production)
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://civicpulse-rkdp.onrender.com/api';
 
 /**
  * Extract query parameters from URL
