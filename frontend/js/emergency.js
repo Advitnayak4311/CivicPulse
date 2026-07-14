@@ -509,18 +509,20 @@ async function startCamera() {
   try {
     const constraints = {
       video: {
-        facingMode: currentFacingMode,
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
+        facingMode: currentFacingMode
       },
       audio: false
     };
+    
+    // Stop any existing stream first to release the camera lock
+    stopCamera();
     
     cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
     if (video) {
       video.srcObject = cameraStream;
       video.onloadedmetadata = () => {
         if (loader) loader.classList.add('d-none');
+        video.play().catch(err => console.warn('Video play deferred:', err));
       };
     }
     
@@ -558,6 +560,7 @@ function stopCamera() {
  * Switch between front (user) and back (environment) camera
  */
 function toggleCameraFacing() {
+  stopCamera(); // Release camera lock first
   currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
   const video = document.getElementById('camera-stream');
   if (video) {

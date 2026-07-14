@@ -579,18 +579,20 @@ async function startCamera() {
   try {
     const constraints = {
       video: {
-        facingMode: currentFacingMode,
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
+        facingMode: currentFacingMode
       },
       audio: false
     };
+    
+    // Stop any existing stream first to release the camera lock
+    stopCamera();
     
     cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
     if (video) {
       video.srcObject = cameraStream;
       video.onloadedmetadata = () => {
         if (loader) loader.classList.add('d-none');
+        video.play().catch(err => console.warn('Video play deferred:', err));
       };
     }
     
@@ -628,6 +630,7 @@ function stopCamera() {
  * Switch between front (user) and back (environment) camera
  */
 function toggleCameraFacing() {
+  stopCamera(); // Release camera lock first
   currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
   const video = document.getElementById('camera-stream');
   if (video) {
@@ -708,24 +711,7 @@ function startVoiceInput(targetInputId, buttonId) {
   const input = document.getElementById(targetInputId);
   if (!btn || !input) return;
 
-  // Pre-flight: check mic permission
-  if (navigator.permissions) {
-    navigator.permissions.query({ name: 'microphone' }).then(perm => {
-      if (perm.state === 'denied') {
-        showToast(
-          '🎤 Microphone is blocked. Click the 🔒 padlock in the address bar → Site settings → Allow Microphone.',
-          'danger'
-        );
-        return;
-      }
-      _startRecognition(SpeechRecognition, btn, input, buttonId);
-    }).catch(() => {
-      // Permissions API not supported for mic; try anyway
-      _startRecognition(SpeechRecognition, btn, input, buttonId);
-    });
-  } else {
-    _startRecognition(SpeechRecognition, btn, input, buttonId);
-  }
+  _startRecognition(SpeechRecognition, btn, input, buttonId);
 }
 
 /**

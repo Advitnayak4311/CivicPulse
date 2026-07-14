@@ -24,13 +24,13 @@ const storage = multer.diskStorage({
 
 // File type and limit configuration
 const fileFilter = (req, file, cb) => {
-  const allowedExtensions = ['.png', '.jpg', '.jpeg'];
+  const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.heic', '.heif', '.gif', '.bmp', '.tiff'];
   const ext = path.extname(file.originalname).toLowerCase();
   
   if (allowedExtensions.includes(ext)) {
     cb(null, true);
   } else {
-    cb(new Error('Only JPG, JPEG, and PNG images are allowed.'), false);
+    cb(new Error('Only standard image formats are allowed (JPG, JPEG, PNG, WEBP, HEIC, GIF, BMP, TIFF).'), false);
   }
 };
 

@@ -1066,3 +1066,16 @@ h1, h2, h3, h4, h5, h6 {
 .dark-theme .card-title {
   color: var(--text-color) !important;
 }
+
+/* Override bootstrap light utilities in dark theme to prevent invisible text/boxes */
+.dark-theme .text-dark {
+  color: var(--text-color) !important;
+}
+.dark-theme .bg-white {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+.dark-theme .bg-light {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}

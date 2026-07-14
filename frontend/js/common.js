@@ -39,13 +39,16 @@ function initTheme() {
  */
 function toggleTheme() {
   const isDark = document.documentElement.classList.contains('dark-theme');
+  const icon = document.getElementById('theme-icon');
   if (isDark) {
     document.documentElement.classList.remove('dark-theme');
     localStorage.setItem('theme', 'light');
+    if (icon) icon.className = 'bi bi-brightness-high-fill text-warning';
     showToast('Theme set to Light Mode', 'info');
   } else {
     document.documentElement.classList.add('dark-theme');
     localStorage.setItem('theme', 'dark');
+    if (icon) icon.className = 'bi bi-moon-fill text-warning';
     showToast('Theme set to Dark Mode', 'info');
   }
   // Dispatches theme changed event for Leaflet maps to redraw or adapt
