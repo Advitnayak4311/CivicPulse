@@ -1,4 +1,68 @@
 const nodemailer = require('nodemailer');
+const https = require('https');
+
+/**
+ * Sends emails using Resend REST API (bypassing Render's SMTP block)
+ */
+const sendViaResend = (toEmail, subject, htmlContent) => {
+  return new Promise((resolve) => {
+    const data = JSON.stringify({
+      from: 'CivicPulse <onboarding@resend.dev>',
+      to: toEmail,
+      subject: subject,
+      html: htmlContent
+    });
+
+    const options = {
+      hostname: 'api.resend.com',
+      port: 443,
+      path: '/emails',
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(data)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let body = '';
+      res.on('data', (chunk) => body += chunk);
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve({ success: true });
+        } else {
+          console.error('Resend API Error:', body);
+          resolve({ success: false, error: body });
+        }
+      });
+    });
+
+    req.on('error', (err) => {
+      console.error('Resend Request Error:', err.message);
+      resolve({ success: false, error: err.message });
+    });
+
+    req.write(data);
+    req.end();
+  });
+};
+
+/**
+ * Universal email helper that chooses Resend API or Nodemailer SMTP
+ */
+const sendMailHelper = async (mailOptions, testAccount, transporter) => {
+  if (process.env.RESEND_API_KEY) {
+    console.log(`Sending email to ${mailOptions.to} via Resend API...`);
+    const result = await sendViaResend(mailOptions.to, mailOptions.subject, mailOptions.html);
+    return result;
+  }
+  const info = await transporter.sendMail(mailOptions);
+  if (testAccount) {
+    console.log(`\n📧 Email Preview (Development): ${nodemailer.getTestMessageUrl(info)}`);
+  }
+  return { success: true, messageId: info.messageId };
+};
 
 /**
  * Creates a nodemailer transporter.
@@ -40,7 +104,9 @@ const createTransporter = async () => {
  */
 const sendOtpEmail = async (toEmail, name, otp) => {
   try {
-    const { transporter, testAccount } = await createTransporter();
+    const { transporter, testAccount } = process.env.RESEND_API_KEY 
+      ? { transporter: null, testAccount: null }
+      : await createTransporter();
 
     const mailOptions = {
       from: `"CivicPulse Emergency System" <${process.env.EMAIL_USER || 'noreply@civicpulse.gov.in'}>`,
@@ -92,16 +158,7 @@ const sendOtpEmail = async (toEmail, name, otp) => {
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
-
-    // In development, print the preview URL for the Ethereal test email
-    if (testAccount) {
-      const previewUrl = nodemailer.getTestMessageUrl(info);
-      console.log(`\n📧 OTP Email Preview (Development): ${previewUrl}`);
-      console.log(`🔑 OTP for ${toEmail}: ${otp}\n`);
-    }
-
-    return { success: true, messageId: info.messageId };
+    return await sendMailHelper(mailOptions, testAccount, transporter);
   } catch (err) {
     // Fallback: Log OTP to console if email fails (development only)
     console.error('Email send failed:', err.message);
@@ -118,7 +175,9 @@ const sendOtpEmail = async (toEmail, name, otp) => {
  */
 const sendComplaintRegisteredEmail = async (toEmail, name, complaint) => {
   try {
-    const { transporter, testAccount } = await createTransporter();
+    const { transporter, testAccount } = process.env.RESEND_API_KEY 
+      ? { transporter: null, testAccount: null }
+      : await createTransporter();
 
     const mailOptions = {
       from: `"CivicPulse Notifications" <${process.env.EMAIL_USER || 'noreply@civicpulse.gov.in'}>`,
@@ -197,11 +256,7 @@ const sendComplaintRegisteredEmail = async (toEmail, name, complaint) => {
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
-    if (testAccount) {
-      console.log(`\n📧 Registration Email Preview (Development): ${nodemailer.getTestMessageUrl(info)}`);
-    }
-    return { success: true };
+    return await sendMailHelper(mailOptions, testAccount, transporter);
   } catch (err) {
     console.error('Registration email failed:', err.message);
     return { success: false, error: err.message };
@@ -219,7 +274,9 @@ const sendComplaintRegisteredEmail = async (toEmail, name, complaint) => {
  */
 const sendComplaintStatusUpdateEmail = async (toEmail, name, complaint, oldStatus, newStatus, remarks) => {
   try {
-    const { transporter, testAccount } = await createTransporter();
+    const { transporter, testAccount } = process.env.RESEND_API_KEY 
+      ? { transporter: null, testAccount: null }
+      : await createTransporter();
 
     // Map status colors for visual cues
     const statusColors = {
@@ -300,11 +357,7 @@ const sendComplaintStatusUpdateEmail = async (toEmail, name, complaint, oldStatu
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
-    if (testAccount) {
-      console.log(`\n📧 Status Update Email Preview (Development): ${nodemailer.getTestMessageUrl(info)}`);
-    }
-    return { success: true };
+    return await sendMailHelper(mailOptions, testAccount, transporter);
   } catch (err) {
     console.error('Status update email failed:', err.message);
     return { success: false, error: err.message };
@@ -319,7 +372,9 @@ const sendComplaintStatusUpdateEmail = async (toEmail, name, complaint, oldStatu
  */
 const sendForgotPasswordEmail = async (toEmail, name, otp) => {
   try {
-    const { transporter, testAccount } = await createTransporter();
+    const { transporter, testAccount } = process.env.RESEND_API_KEY 
+      ? { transporter: null, testAccount: null }
+      : await createTransporter();
 
     const mailOptions = {
       from: `"CivicPulse Account Security" <${process.env.EMAIL_USER || 'noreply@civicpulse.gov.in'}>`,
@@ -370,15 +425,7 @@ const sendForgotPasswordEmail = async (toEmail, name, otp) => {
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
-
-    if (testAccount) {
-      const previewUrl = nodemailer.getTestMessageUrl(info);
-      console.log(`\n📧 Password Reset Email Preview (Development): ${previewUrl}`);
-      console.log(`🔑 Reset OTP for ${toEmail}: ${otp}\n`);
-    }
-
-    return { success: true, messageId: info.messageId };
+    return await sendMailHelper(mailOptions, testAccount, transporter);
   } catch (err) {
     console.error('Password reset email failed:', err.message);
     console.log(`🔑 [FALLBACK] Reset OTP for ${toEmail}: ${otp}`);
@@ -394,7 +441,9 @@ const sendForgotPasswordEmail = async (toEmail, name, otp) => {
  */
 const sendComplaintEscalatedEmail = async (officerEmail, officerName, complaint) => {
   try {
-    const { transporter, testAccount } = await createTransporter();
+    const { transporter, testAccount } = process.env.RESEND_API_KEY 
+      ? { transporter: null, testAccount: null }
+      : await createTransporter();
 
     const mailOptions = {
       from: `"CivicPulse Administrator" <${process.env.EMAIL_USER || 'noreply@civicpulse.gov.in'}>`,
@@ -453,15 +502,7 @@ const sendComplaintEscalatedEmail = async (officerEmail, officerName, complaint)
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
-
-    if (testAccount) {
-      const previewUrl = nodemailer.getTestMessageUrl(info);
-      console.log(`\n📧 Escalation Email Preview (Development): ${previewUrl}`);
-      console.log(`🚨 Escalated alert sent to ${officerEmail} for ${complaint.complaintId}\n`);
-    }
-
-    return { success: true, messageId: info.messageId };
+    return await sendMailHelper(mailOptions, testAccount, transporter);
   } catch (err) {
     console.error('Escalation email failed:', err.message);
     console.log(`🚨 [FALLBACK] Escalation Alert for ${complaint.complaintId} to ${officerEmail}`);
